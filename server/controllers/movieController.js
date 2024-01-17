@@ -1,55 +1,57 @@
 // sample data to be replaced with PostgreSQL db
 // Sample data (replace with actual database queries)
-const movies = [
-  { id: 101, title: "Pulp Fiction", genre: "Crime" },
-  { id: 102, title: "Mad Max: Fury Road", genre: "Apocalyptic" }
-];
 
-const getAllMovies = (req, res) => {
-  res.json(movies);
-};
+// const movies = [
+//   { id: 101, title: "Pulp Fiction", genre: "Crime" },
+//   { id: 102, title: "Mad Max: Fury Road", genre: "Apocalyptic" }
+// ];
 
-const getMovieById = (req, res) => {
-  const { id } = req.params;
-  const movie = movies.find((m) => m.id === parseInt(id));
-  if (!movie) {
-    return res.status(404).json({ error: 'Movie not found' });
+const axios = require('axios');
+const config = require('../config');
+
+const apiKey = config.tmdbApiKey;
+const apiUrl = 'https://api.themoviedb.org/3/search/movie';
+
+const searchMoviesByName = async (req, res) => {
+  const { name } = req.query;
+
+  if (!name) {
+    return res.status(400).json({ error: 'Missing required parameter: name' });
   }
-  res.json(movie);
-};
 
-const addMovie = (req, res) => {
-  const { title, genre } = req.body;
-  const newMovie = { id: movies.length + 1, title, genre };
-  movies.push(newMovie);
-  res.status(201).json(newMovie);
-};
-
-const updateMovie = (req, res) => {
-  const { id } = req.params;
-  const { title, genre } = req.body;
-  const index = movies.findIndex((m) => m.id === parseInt(id));
-  if (index === -1) {
-    return res.status(404).json({ error: 'Movie not found' });
+  try {
+    const response = await axios.get(`${apiUrl}?api_key=${apiKey}&query=${name}`);
+    const movies = response.data.results;
+    res.json(movies);
+  } catch (error) {
+    console.error('Error fetching movies by name:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  movies[index] = { id: parseInt(id), title, genre };
-  res.json(movies[index]);
 };
 
-const deleteMovie = (req, res) => {
+const getRecipesByMovieId = async (req, res) => {
   const { id } = req.params;
-  const index = movies.findIndex((m) => m.id === parseInt(id));
-  if (index === -1) {
-    return res.status(404).json({ error: 'Movie not found' });
+
+  try {
+    // Fetch movie details by ID
+    const movieResponse = await axios.get(`${apiUrl}/movie/${id}?api_key=${apiKey}`);
+    const movie = movieResponse.data;
+
+    // Fetch recipes related to the movie title, will need to implement logic to fetch recipes based on the movie title from db
+    const recipes = [];
+
+    res.json({ movie, recipes });
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return res.status(404).json({ error: 'Movie not found' });
+    }
+
+    console.error('Error fetching movie and recipes by ID:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  const deletedMovie = movies.splice(index, 1);
-  res.json(deletedMovie[0]);
 };
 
 module.exports = {
-  getAllMovies,
-  getMovieById,
-  addMovie,
-  updateMovie,
-  deleteMovie,
+  searchMoviesByName,
+  getRecipesByMovieId,
 };
