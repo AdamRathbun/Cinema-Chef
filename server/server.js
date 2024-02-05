@@ -2,11 +2,13 @@
 const express = require('express');
 const { Pool } = require('pg');
 const config = require('./config');
+const cors = require('cors')
 
 const app = express();
 const port = 5000;
 
 app.use(express.json());
+app.use(cors())
 
 const pool = new Pool({
   user: config.postgresUser,
@@ -35,6 +37,21 @@ app.get('/recipes', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching recipes');
+  }
+});
+
+app.get('/top-liked-recipes', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM recipes ORDER BY likes DESC LIMIT 20'
+    );
+
+    const topLikedRecipes = result.rows;
+
+    res.json(topLikedRecipes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching top liked recipes');
   }
 });
 
