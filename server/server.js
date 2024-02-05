@@ -16,16 +16,16 @@ const pool = new Pool({
   port: config.postgresPort,
 });
 
-app.get('/test-db-connection', async (req, res) => {
-  try {
-    const client = await pool.connect();
-    res.send('Database connection successful');
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error connecting to the database');
-  }
-});
+// app.get('/test-db-connection', async (req, res) => {
+//   try {
+//     const client = await pool.connect();
+//     res.send('Database connection successful');
+//     client.release();
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Error connecting to the database');
+//   }
+// });
 
 app.get('/recipes', async (req, res) => {
   try {
