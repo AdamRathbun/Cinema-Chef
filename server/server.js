@@ -3,6 +3,8 @@ const express = require('express');
 const { Pool } = require('pg');
 const config = require('./config');
 const cors = require('cors')
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 const port = 5000;
@@ -18,16 +20,19 @@ const pool = new Pool({
   port: config.postgresPort,
 });
 
-// app.get('/test-db-connection', async (req, res) => {
-//   try {
-//     const client = await pool.connect();
-//     res.send('Database connection successful');
-//     client.release();
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error connecting to the database');
-//   }
-// });
+// need to update storage location later
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const extension = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + extension);
+  },
+});
+
+const upload = multer({ storage });
 
 app.get('/recipes', async (req, res) => {
   try {
@@ -67,6 +72,20 @@ app.post('/recipes', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error creating a new recipe');
+  }
+});
+
+app.post('/upload-image', upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const { filename, size } = req.file;
+    res.json({ filename, size });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
