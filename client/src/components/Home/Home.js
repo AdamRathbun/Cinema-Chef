@@ -28,6 +28,7 @@ function Home() {
             <h3>{recipe.title}</h3>
             <p>{recipe.ingredients}</p>
             <p>{recipe.instructions}</p>
+            <p>{recipe.movie_title}</p>
             <p>Likes: {recipe.likes}</p>
           </li>
         ))}

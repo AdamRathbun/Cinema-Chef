@@ -60,7 +60,7 @@ app.get('/top-liked-recipes', async (req, res) => {
   }
 });
 
-app.post('/recipes', async (req, res) => {
+app.post('/recipes', upload.none(), async (req, res) => {
   const { title, ingredients, instructions, movie_title } = req.body;
   try {
     const result = await pool.query(
@@ -78,9 +78,8 @@ app.post('/recipes', async (req, res) => {
 app.post('/upload-image', upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      return res.status(200).json({ message: 'No image uploaded.' });
     }
-
     const { filename, size } = req.file;
     res.json({ filename, size });
   } catch (err) {

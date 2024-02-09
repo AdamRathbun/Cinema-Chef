@@ -10,6 +10,8 @@ function AddRecipe() {
     image: null
   });
 
+  const [message, setMessage] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -40,14 +42,32 @@ function AddRecipe() {
     }
 
     try {
-      const response = await axios.post('/recipes', form, {
+      const uploadImageResponse = await axios.post('http://localhost:5000/upload-image', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log(response.data);
+
+      const recipeFormData = new FormData();
+      recipeFormData.append('title', formData.title);
+      recipeFormData.append('ingredients', formData.ingredients);
+      recipeFormData.append('instructions', formData.instructions);
+      recipeFormData.append('movie_title', formData.movie_title);
+
+      if (formData.image) {
+        const { filename } = uploadImageResponse.data;
+        recipeFormData.append('image', filename);
+      }
+
+      const uploadRecipeResponse = await axios.post('http://localhost:5000/recipes', recipeFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setMessage('Recipe added!')
     } catch (error) {
-      console.log(error);
+      console.error('Error uploading data:', error);
+      setMessage('Error adding the recipe—try again.')
     }
   };
 
@@ -102,6 +122,7 @@ function AddRecipe() {
         </div>
         <button type='submit'>Submit</button>
       </form>
+      {message && <div>{message}</div>}
     </div>
   );
 }
