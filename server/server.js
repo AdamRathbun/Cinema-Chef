@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { Pool } = require('pg');
 const config = require('./config');
@@ -57,6 +56,21 @@ app.get('/top-liked-recipes', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching top liked recipes');
+  }
+});
+
+app.get('/recipes/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE recipe_id = $1', [id]);
+    const recipe = result.rows[0];
+    if (!recipe) {
+      return res.status(404).send('Recipe not found');
+    }
+    res.json(recipe);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching recipe');
   }
 });
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Home() {
   const [likedRecipes, setLikedRecipes] = useState([]);
 
   useEffect(() => {
-    // *Update link once hosted
     axios.get('http://localhost:5000/top-liked-recipes')
       .then((response) => {
         console.log('Response data:', response.data);
@@ -25,11 +25,13 @@ function Home() {
       <ul>
         {likedRecipes.map((recipe) => (
           <li key={recipe.recipe_id}>
-            <h3>{recipe.title}</h3>
-            <p>{recipe.ingredients}</p>
-            <p>{recipe.instructions}</p>
-            <p>{recipe.movie_title}</p>
-            <p>Likes: {recipe.likes}</p>
+            <Link to={`/recipes/${recipe.recipe_id}`}>
+              <h3>{recipe.title}</h3>
+              <p>{recipe.movie_title}</p>
+              <p>{recipe.ingredients}</p>
+              <p>{recipe.instructions}</p>
+              <p>Likes: {recipe.likes}</p>
+            </Link>
           </li>
         ))}
       </ul>
