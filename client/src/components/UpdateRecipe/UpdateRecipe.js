@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function UpdateRecipe({ recipeId }) {
+function UpdateRecipe({ recipe_id }) {
   const [formData, setFormData] = useState({
     title: '',
     ingredients: '',
@@ -13,7 +13,7 @@ function UpdateRecipe({ recipeId }) {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/recipes/${recipeId}`);
+        const response = await axios.get(`http://localhost:5000/recipes/${recipe_id}`);
         const { data } = response;
         setFormData({
           title: data.title,
@@ -27,7 +27,7 @@ function UpdateRecipe({ recipeId }) {
     };
 
     fetchRecipe();
-  }, [recipeId]);
+  }, [recipe_id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +55,7 @@ function UpdateRecipe({ recipeId }) {
     recipeData.append('image', formData.image);
 
     try {
-      const response = await axios.put(`http://localhost:5000/recipes/${recipeId}`, recipeData);
+      const response = await axios.put(`http://localhost:5000/recipes/${recipe_id}`, recipeData);
       console.log('Recipe updated:', response.data);
     } catch (error) {
       console.error('Error updating recipe:', error);

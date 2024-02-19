@@ -31,22 +31,28 @@ function AddRecipe() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const form = new FormData();
-    form.append('title', formData.title);
-    form.append('ingredients', formData.ingredients);
-    form.append('instructions', formData.instructions);
-    form.append('movie_title', formData.movie_title);
-
-    if (formData.image) {
-      form.append('image', formData.image);
-    }
+    console.log(formData);
 
     try {
-      const uploadImageResponse = await axios.post('http://localhost:5000/upload-image', form, {
+      const form = new FormData();
+      form.append('title', formData.title);
+      form.append('ingredients', formData.ingredients);
+      form.append('instructions', formData.instructions);
+      form.append('movie_title', formData.movie_title);
+
+      if (formData.image) {
+        form.append('image', formData.image);
+      }
+
+      const uploadResponse = await axios.post('http://localhost:5000/upload-image', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+
+      const imageUrl = uploadResponse.data.imageUrl;
+
+      console.log('Received imageUrl from upload:', imageUrl);
 
       const recipeFormData = new FormData();
       recipeFormData.append('title', formData.title);
@@ -54,20 +60,20 @@ function AddRecipe() {
       recipeFormData.append('instructions', formData.instructions);
       recipeFormData.append('movie_title', formData.movie_title);
 
-      if (formData.image) {
-        const { filename } = uploadImageResponse.data;
-        recipeFormData.append('image', filename);
+      if (imageUrl) {
+        recipeFormData.append('imageUrl', imageUrl);
       }
 
-      const uploadRecipeResponse = await axios.post('http://localhost:5000/recipes', recipeFormData, {
+      await axios.post('http://localhost:5000/recipes', recipeFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      setMessage('Recipe added!')
+
+      setMessage('Recipe added!');
     } catch (error) {
       console.error('Error uploading data:', error);
-      setMessage('Error adding the recipe—try again.')
+      setMessage('Error adding the recipe—try again.');
     }
   };
 

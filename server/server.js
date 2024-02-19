@@ -19,10 +19,13 @@ const pool = new Pool({
   port: config.postgresPort,
 });
 
+// need to update later
+app.use('/upload-image', express.static(path.join(__dirname, 'upload-image')));
+
 // need to update storage location later
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, 'upload-image/');
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -47,7 +50,7 @@ app.get('/recipes', async (req, res) => {
 app.get('/top-liked-recipes', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM recipes ORDER BY likes DESC LIMIT 20'
+      'SELECT * FROM recipes ORDER BY likes DESC LIMIT 50'
     );
 
     const topLikedRecipes = result.rows;
@@ -74,31 +77,40 @@ app.get('/recipes/:id', async (req, res) => {
   }
 });
 
-app.post('/recipes', upload.none(), async (req, res) => {
-  const { title, ingredients, instructions, movie_title } = req.body;
+// need to update later with image hosting url
+app.post('/upload-image', upload.single('image'), async (req, res) => {
   try {
+    console.log('Received image upload request');
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image uploaded.' });
+    }
+
+    const filename = req.file.filename;
+
+    const imageUrl = `http://localhost:5000/upload-image/${filename}`;
+
+    res.json({ imageUrl });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/recipes', upload.none(), async (req, res) => {
+  const { title, ingredients, instructions, movie_title, imageUrl } = req.body;
+  try {
+    console.log('Received data for new recipe:', { title, ingredients, instructions, movie_title, imageUrl });
+
     const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title) VALUES ($1, $2, $3, $4) RETURNING *',
-      [title, ingredients, instructions, movie_title]
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, ingredients, instructions, movie_title, imageUrl]
     );
     const newRecipe = result.rows[0];
     res.status(201).json(newRecipe);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error creating a new recipe');
-  }
-});
-
-app.post('/upload-image', upload.single('image'), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(200).json({ message: 'No image uploaded.' });
-    }
-    const { filename, size } = req.file;
-    res.json({ filename, size });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
   }
 });
 

@@ -72,7 +72,26 @@ const deleteRecipe = async (req, res) => {
     res.status(500).send('Error deleting the recipe');
   }
 };
-// here
+
+const uploadImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image uploaded.' });
+    }
+
+    const filename = req.file.filename;
+    const image = `http://localhost:5000/upload-image/${filename}`;
+
+    const recipe_id = req.body.recipe_id;
+    const updateQuery = 'UPDATE recipes SET image = $1 WHERE recipe_id = $2';
+    await pool.query(updateQuery, [image, recipe_id]);
+
+    res.json({ image });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 module.exports = {
   getAllRecipes,
@@ -80,6 +99,6 @@ module.exports = {
   addRecipe,
   updateRecipe,
   deleteRecipe,
+  uploadImage,
 };
-
 
