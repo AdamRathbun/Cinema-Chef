@@ -48,11 +48,42 @@ const addRecipe = async (req, res) => {
 const updateRecipe = async (req, res) => {
   const { id } = req.params;
   const { title, ingredients, instructions, movie_title } = req.body;
+
   try {
-    const result = await pool.query(
-      'UPDATE recipes SET title = $1, ingredients = $2, instructions = $3, movie_title = $4 WHERE recipe_id = $5 RETURNING *',
-      [title, ingredients, instructions, movie_title, id]
-    );
+    let updateQuery = 'UPDATE recipes SET';
+    const queryParams = [];
+
+    if (title) {
+      updateQuery += ' title = $1,';
+      queryParams.push(title);
+    }
+
+    if (ingredients) {
+      updateQuery += ' ingredients = $2,';
+      queryParams.push(ingredients);
+    }
+
+    if (instructions) {
+      updateQuery += ' instructions = $3,';
+      queryParams.push(instructions);
+    }
+
+    if (movie_title) {
+      updateQuery += ' movie_title = $4,';
+      queryParams.push(movie_title);
+    }
+
+    if (req.body.field === 'image' && req.body.image) {
+      updateQuery += ' image = $5';
+      queryParams.push(req.body.image);
+    }
+
+    updateQuery = updateQuery.replace(/,$/, '');
+
+    updateQuery += ' WHERE recipe_id = $6 RETURNING *';
+    queryParams.push(id);
+
+    const result = await pool.query(updateQuery, queryParams);
     const updatedRecipe = result.rows[0];
     res.json(updatedRecipe);
   } catch (err) {
@@ -61,17 +92,6 @@ const updateRecipe = async (req, res) => {
   }
 };
 
-const deleteRecipe = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const result = await pool.query('DELETE FROM recipes WHERE recipe_id = $1 RETURNING *', [id]);
-    const deletedRecipe = result.rows[0];
-    res.json(deletedRecipe);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error deleting the recipe');
-  }
-};
 
 const uploadImage = async (req, res) => {
   try {
@@ -90,6 +110,18 @@ const uploadImage = async (req, res) => {
   } catch (error) {
     console.error('Error uploading image:', error);
     res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const deleteRecipe = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('DELETE FROM recipes WHERE recipe_id = $1 RETURNING *', [id]);
+    const deletedRecipe = result.rows[0];
+    res.json(deletedRecipe);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error deleting the recipe');
   }
 };
 

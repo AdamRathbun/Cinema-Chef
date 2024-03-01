@@ -52,8 +52,6 @@ function AddRecipe() {
 
       const imageUrl = uploadResponse.data.imageUrl;
 
-      console.log('Received imageUrl from upload:', imageUrl);
-
       const recipeFormData = new FormData();
       recipeFormData.append('title', formData.title);
       recipeFormData.append('ingredients', formData.ingredients);

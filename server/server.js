@@ -4,12 +4,16 @@ const config = require('./config');
 const cors = require('cors')
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs').promises;
 
 const app = express();
 const port = 5000;
 
 app.use(express.json());
 app.use(cors())
+
+// need to update later
+app.use('/upload-image', express.static(path.join(__dirname, 'upload-image')));
 
 const pool = new Pool({
   user: config.postgresUser,
@@ -18,9 +22,6 @@ const pool = new Pool({
   password: config.postgresPassword,
   port: config.postgresPort,
 });
-
-// need to update later
-app.use('/upload-image', express.static(path.join(__dirname, 'upload-image')));
 
 // need to update storage location later
 const storage = multer.diskStorage({
@@ -80,8 +81,6 @@ app.get('/recipes/:id', async (req, res) => {
 // need to update later with image hosting url
 app.post('/upload-image', upload.single('image'), async (req, res) => {
   try {
-    console.log('Received image upload request');
-
     if (!req.file) {
       return res.status(400).json({ message: 'No image uploaded.' });
     }
@@ -114,19 +113,79 @@ app.post('/recipes', upload.none(), async (req, res) => {
   }
 });
 
-app.put('/recipes/:id', async (req, res) => {
+app.put('/recipes/:id', upload.single('image'), async (req, res) => {
   const { id } = req.params;
-  const { title, ingredients, instructions, movie_title } = req.body;
+
   try {
-    const result = await pool.query(
-      'UPDATE recipes SET title = $1, ingredients = $2, instructions = $3, movie_title = $4 WHERE recipe_id = $5 RETURNING *',
-      [title, ingredients, instructions, movie_title, id]
-    );
-    const updatedRecipe = result.rows[0];
-    res.json(updatedRecipe);
+    const existingRecipeResult = await pool.query('SELECT * FROM recipes WHERE recipe_id = $1', [id]);
+    const existingRecipe = existingRecipeResult.rows[0];
+
+    if (!existingRecipe) {
+      return res.status(404).json({ message: 'Recipe not found.' });
+    }
+
+    console.log('Received Field:', req.body.field);
+
+    if (req.file && req.body.field === 'image') {
+      const oldImageUrl = existingRecipe.image;
+      if (oldImageUrl) {
+        const oldImagePath = path.join(__dirname, 'upload-image', path.basename(oldImageUrl));
+        try {
+          await fs.unlink(oldImagePath);
+          console.log('Old image file deleted from server:', oldImagePath);
+        } catch (error) {
+          console.error('Error deleting old image file:', error);
+          throw error;
+        }
+      }
+    }
+
+    const fieldToColumnMap = {
+      title: 'title',
+      ingredients: 'ingredients',
+      instructions: 'instructions',
+      movie_title: 'movie_title',
+      image: 'image',
+    };
+
+    const { field, value } = req.body;
+    const column = fieldToColumnMap[field];
+
+    if (!column) {
+      console.error(`Error updating the recipe: Unknown field - ${field}`);
+      return res.status(400).send('Unknown field');
+    }
+
+    if (field === 'image' && req.file) {
+      const newImageFilename = req.file.filename;
+      // *update later with image hosting url
+      const newImageUrl = `http://localhost:5000/upload-image/${newImageFilename}`;
+
+      const updateQuery = `UPDATE recipes SET ${column} = $1 WHERE recipe_id = $2 RETURNING *`;
+      const queryParams = [newImageUrl, id];
+
+      console.log('Update Query:', updateQuery);
+      console.log('Query Parameters:', queryParams);
+
+      const updateResult = await pool.query(updateQuery, queryParams);
+      const updatedRecipe = updateResult.rows[0];
+
+      return res.json(updatedRecipe);
+    }
+
+    const updateQuery = `UPDATE recipes SET ${column} = $1 WHERE recipe_id = $2 RETURNING *`;
+    const queryParams = [value, id];
+
+    console.log('Update Query:', updateQuery);
+    console.log('Query Parameters:', queryParams);
+
+    const updateResult = await pool.query(updateQuery, queryParams);
+    const updatedRecipe = updateResult.rows[0];
+
+    return res.json(updatedRecipe);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error updating the recipe');
+    console.error('Error updating the recipe:', err);
+    return res.status(500).send('Error updating the recipe');
   }
 });
 
@@ -135,6 +194,26 @@ app.delete('/recipes/:id', async (req, res) => {
   try {
     const result = await pool.query('DELETE FROM recipes WHERE recipe_id = $1 RETURNING *', [id]);
     const deletedRecipe = result.rows[0];
+
+    if (!deletedRecipe) {
+      return res.status(404).json({ message: 'Recipe not found.' });
+    }
+
+    const imageUrl = deletedRecipe.image;
+
+    // *Need to update later with image hosting: Deletes the image from the server
+    if (imageUrl) {
+      const imagePath = path.join(__dirname, 'upload-image', path.basename(imageUrl));
+
+      try {
+        await fs.unlink(imagePath);
+      } catch (error) {
+        console.error('Error deleting image file:', error);
+      }
+    } else {
+      console.log('Recipe has no image to delete.');
+    }
+
     res.json(deletedRecipe);
   } catch (err) {
     console.error(err);
@@ -145,3 +224,4 @@ app.delete('/recipes/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+

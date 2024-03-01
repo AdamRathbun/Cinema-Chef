@@ -1,110 +1,103 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function UpdateRecipe({ recipe_id }) {
-  const [formData, setFormData] = useState({
-    title: '',
-    ingredients: '',
-    instructions: '',
-    movie_title: '',
-    image: null
-  });
+function UpdateRecipe({ field, initialValue, onUpdate, id }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(initialValue);
+  const [isUpdating, setIsUpdating] = useState(false);
+
 
   useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/recipes/${recipe_id}`);
-        const { data } = response;
-        setFormData({
-          title: data.title,
-          ingredients: data.ingredients,
-          instructions: data.instructions,
-          movie_title: data.movie_title,
-        });
-      } catch (error) {
-        console.error('Error fetching recipe:', error);
-      }
-    };
+    setValue(initialValue);
+  }, [initialValue]);
 
-    fetchRecipe();
-  }, [recipe_id]);
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setValue(initialValue);
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'image' && e.target.files.length > 0) {
-      setFormData({
-        ...formData,
-        image: e.target.files[0]
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setValue(e.target.value.toString());
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log('Selected File:', file);
+    setValue(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const recipeData = new FormData();
-    recipeData.append('title', formData.title);
-    recipeData.append('ingredients', formData.ingredients);
-    recipeData.append('instructions', formData.instructions);
-    recipeData.append('movie_title', formData.movie_title);
-    recipeData.append('image', formData.image);
+    if (isUpdating) {
+      console.log('Update already in progress. Ignoring.');
+      return;
+    }
+
+    setIsUpdating(true);
+
+    setIsEditing(false);
 
     try {
-      const response = await axios.put(`http://localhost:5000/recipes/${recipe_id}`, recipeData);
-      console.log('Recipe updated:', response.data);
+      const formData = new FormData();
+
+      if (field === 'image') {
+        formData.append('field', 'image');
+        formData.append('image', value);
+      } else {
+        formData.append('field', field);
+        formData.append('value', value.toString());
+      }
+
+      console.log('FormData:', formData);
+
+      const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData);
+
+      if (onUpdate) {
+        console.log('Calling onUpdate with:', field, response.data[field]);
+        onUpdate(field, response.data[field]);
+      }
     } catch (error) {
-      console.error('Error updating recipe:', error);
+      console.error(`Error updating ${field}:`, error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
+
   return (
     <div>
-      <h2>Update Recipe</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Title</label>
-        <input
-          type='text'
-          name='title'
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-        <label>Ingredients</label>
-        <textarea
-          name='ingredients'
-          value={formData.ingredients}
-          onChange={handleChange}
-          required
-        />
-        <label>Instructions</label>
-        <textarea
-          name='instructions'
-          value={formData.instructions}
-          onChange={handleChange}
-          required
-        />
-        <label>Movie Title</label>
-        <textarea
-          name='movie_title'
-          value={formData.movie_title}
-          onChange={handleChange}
-          required
-        />
-        <label>Image</label>
-        <input
-          type='file'
-          name='image'
-          onChange={handleChange}
-        />
-        <button type='submit'>Update</button>
-      </form>
+      {isEditing ? (
+        <form onSubmit={handleSubmit}>
+          {field === 'image' ? (
+            <>
+              <label>Choose new image</label>
+              <input type="file" onChange={handleFileChange} accept="image/*" value={undefined} />
+
+            </>
+          ) : (
+            <>
+              <label>{field}</label>
+              <textarea name={field} value={value} onChange={handleChange} required />
+            </>
+          )}
+          <button type="submit">Update</button>
+          <button type="button" onClick={handleCancel}>
+            Cancel
+          </button>
+        </form>
+      ) : (
+        <button type="button" onClick={handleEdit}>
+          Edit {field}
+        </button>
+      )}
     </div>
   );
 }
 
 export default UpdateRecipe;
+
