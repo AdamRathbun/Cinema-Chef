@@ -1,4 +1,6 @@
 const pool = require('./server').pool;
+// 3.1, for authMiddleware.authenticateToken
+const authMiddleware = require('../middleware/authMiddleware');
 
 const getAllRecipes = async (req, res) => {
   try {

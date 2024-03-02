@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const recipeController = require('../controllers/recipeController');
+import authenticateToken from '../middleware/authMiddleware.js'
 
 router.get('/recipes', recipeController.getAllRecipes);
 router.get('/recipes/:id', recipeController.getRecipeById);

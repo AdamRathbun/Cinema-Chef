@@ -5,6 +5,8 @@ const cors = require('cors')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs').promises;
+// 3.1
+// const authRoutes = require('./routes/auth');
 
 const app = express();
 const port = 5000;
