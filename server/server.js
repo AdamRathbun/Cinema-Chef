@@ -5,8 +5,9 @@ const cors = require('cors')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs').promises;
-// 3.1
-// const authRoutes = require('./routes/auth');
+const authController = require('./controllers/authController');
+const { authenticateToken } = require('./middleware/authMiddleware');
+
 
 const app = express();
 const port = 5000;
@@ -81,7 +82,7 @@ app.get('/recipes/:id', async (req, res) => {
 });
 
 // need to update later with image hosting url
-app.post('/upload-image', upload.single('image'), async (req, res) => {
+app.post('/upload-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No image uploaded.' });
@@ -98,7 +99,7 @@ app.post('/upload-image', upload.single('image'), async (req, res) => {
   }
 });
 
-app.post('/recipes', upload.none(), async (req, res) => {
+app.post('/recipes', authenticateToken, upload.none(), async (req, res) => {
   const { title, ingredients, instructions, movie_title, imageUrl } = req.body;
   try {
     console.log('Received data for new recipe:', { title, ingredients, instructions, movie_title, imageUrl });
@@ -115,7 +116,7 @@ app.post('/recipes', upload.none(), async (req, res) => {
   }
 });
 
-app.put('/recipes/:id', upload.single('image'), async (req, res) => {
+app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -191,7 +192,7 @@ app.put('/recipes/:id', upload.single('image'), async (req, res) => {
   }
 });
 
-app.delete('/recipes/:id', async (req, res) => {
+app.delete('/recipes/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query('DELETE FROM recipes WHERE recipe_id = $1 RETURNING *', [id]);
@@ -222,6 +223,9 @@ app.delete('/recipes/:id', async (req, res) => {
     res.status(500).send('Error deleting the recipe');
   }
 });
+
+app.post('/auth/register', authController.register);
+app.post('/auth/login', authController.login);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
