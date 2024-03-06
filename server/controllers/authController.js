@@ -51,6 +51,7 @@ const login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Invalid credentials.' });
     }
@@ -63,6 +64,7 @@ const login = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 module.exports = {
   register,

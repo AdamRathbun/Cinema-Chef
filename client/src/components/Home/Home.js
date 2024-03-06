@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import AuthComponent from '../Auth/Auth';
 
 function Home() {
   const [likedRecipes, setLikedRecipes] = useState([]);
@@ -20,7 +21,7 @@ function Home() {
     <div>
       <h1>Cinema Chef</h1>
       <p>Explore culinary recipes based on cinematic masterpieces</p>
-
+      <AuthComponent />
       <h2>Most Liked Recipes</h2>
       <ul>
         {likedRecipes.map((recipe) => (

@@ -228,6 +228,7 @@ app.post('/auth/register', authController.register);
 app.post('/auth/login', authController.login);
 
 app.listen(port, () => {
+  // need to update later
   console.log(`Server is running on http://localhost:${port}`);
 });
 
