@@ -7,24 +7,36 @@ import UpdateRecipe from '../UpdateRecipe/UpdateRecipe';
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
   const [isUpdating, setIsUpdating] = useState(false);
+  const [movieInfo, setMovieInfo] = useState(null);
+  const [showMovieInfo, setShowMovieInfo] = useState(false);
 
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/recipes/${id}`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/recipes/${id}`);
         console.log('Recipe data:', response.data);
         setRecipe(response.data);
+
+        const movieTitle = response.data.movie_title;
+        if (movieTitle) {
+          const movieResponse = await axios.get(`http://localhost:5000/api/movies/search?name=${movieTitle}`);
+          const movieData = movieResponse.data[0];
+          setMovieInfo(movieData);
+        }
+
         setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching recipe:', error);
+      } catch (error) {
+        console.error('Error fetching recipe or movie information:', error);
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchData();
+
   }, [id]);
 
   const handleDelete = async () => {
@@ -79,16 +91,29 @@ function Recipe() {
     }
   };
 
+  const toggleMovieInfo = () => {
+    setShowMovieInfo(!showMovieInfo);
+  };
 
   return (
     <div className="recipe">
       {recipe && (
         <>
           <h2 className="recipe_title">{recipe.title}</h2>
+          <button onClick={toggleMovieInfo}>
+            {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
+          </button>
           <p className="recipe_movie_title">
             <strong>Movie Title:</strong> {recipe.movie_title}
           </p>
           {recipe.image && <img className="recipe_image" src={recipe.image} alt={recipe.title} />}
+          {movieInfo && showMovieInfo && movieInfo.poster_path && (
+            <img
+              className="recipe_movie_poster"
+              src={`https://image.tmdb.org/t/p/w500${movieInfo.poster_path}`}
+              alt={movieInfo.title}
+            />
+          )}
           <p className="recipe_ingredients">
             <strong>Ingredients:</strong> {recipe.ingredients}
           </p>
@@ -116,6 +141,13 @@ function Recipe() {
           />
           <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} />
           <DeleteRecipe recipeId={id} onDelete={handleDelete} />
+          {showMovieInfo && movieInfo && (
+            <>
+              <h4>More about this movie:</h4>
+              <p>{movieInfo.overview}</p>
+              <p>Released in {movieInfo.release_date}.</p>
+            </>
+          )}
         </>
       )}
       {!recipe && <div>Recipe not found</div>}

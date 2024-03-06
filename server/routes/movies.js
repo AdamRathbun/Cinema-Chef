@@ -2,11 +2,6 @@ const express = require('express');
 const router = express.Router();
 const movieController = require('../controllers/movieController');
 
-// Routes for handling CRUD operations on movies
-router.get('/movies', movieController.getAllMovies);
-router.get('/movies/:id', movieController.getMovieById);
-router.post('/movies', movieController.addMovie);
-router.put('/movies/:id', movieController.updateMovie);
-router.delete('/movies/:id', movieController.deleteMovie);
+router.get('/api/movies/search', movieController.searchMoviesByName);
 
 module.exports = router;

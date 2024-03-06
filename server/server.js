@@ -7,7 +7,8 @@ const path = require('path');
 const fs = require('fs').promises;
 const authController = require('./controllers/authController');
 const { authenticateToken } = require('./middleware/authMiddleware');
-
+// 3.6
+const movieController = require('./controllers/movieController');
 
 const app = express();
 const port = 5000;
@@ -226,6 +227,8 @@ app.delete('/recipes/:id', authenticateToken, async (req, res) => {
 
 app.post('/auth/register', authController.register);
 app.post('/auth/login', authController.login);
+
+app.get('/api/movies/search', movieController.searchMoviesByName);
 
 app.listen(port, () => {
   // need to update later
