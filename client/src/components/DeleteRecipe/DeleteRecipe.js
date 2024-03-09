@@ -1,11 +1,19 @@
 import React from 'react';
 import axios from 'axios';
 
-const DeleteRecipe = ({ recipeId, onDelete }) => {
+const DeleteRecipe = ({ recipeId, onDelete, authToken }) => {
   const handleDelete = async () => {
     try {
-      // *Update later with hosting url
-      const response = await axios.delete(`http://localhost:5000/recipes/${recipeId}`);
+      if (!authToken) {
+        console.error('Authentication token is missing.');
+        return;
+      }
+
+      const response = await axios.delete(`http://localhost:5000/recipes/${recipeId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
 
       if (response.status === 200) {
         if (onDelete) {

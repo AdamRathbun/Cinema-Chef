@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function UpdateRecipe({ field, initialValue, onUpdate, id }) {
+function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [isUpdating, setIsUpdating] = useState(false);
-
 
   useEffect(() => {
     setValue(initialValue);
@@ -55,7 +54,12 @@ function UpdateRecipe({ field, initialValue, onUpdate, id }) {
 
       console.log('FormData:', formData);
 
-      const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData);
+      const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       if (onUpdate) {
         console.log('Calling onUpdate with:', field, response.data[field]);
@@ -68,7 +72,6 @@ function UpdateRecipe({ field, initialValue, onUpdate, id }) {
     }
   };
 
-
   return (
     <div>
       {isEditing ? (
@@ -77,7 +80,6 @@ function UpdateRecipe({ field, initialValue, onUpdate, id }) {
             <>
               <label>Choose new image</label>
               <input type="file" onChange={handleFileChange} accept="image/*" value={undefined} />
-
             </>
           ) : (
             <>
@@ -100,4 +102,3 @@ function UpdateRecipe({ field, initialValue, onUpdate, id }) {
 }
 
 export default UpdateRecipe;
-

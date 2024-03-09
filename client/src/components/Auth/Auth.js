@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+
 
 const AuthComponent = () => {
   const [formData, setFormData] = useState({
@@ -10,12 +12,30 @@ const AuthComponent = () => {
   const [user, setUser] = useState(null);
   const [isRegister, setIsRegister] = useState(false);
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem('authToken');
+
+    if (storedToken) {
+      try {
+        const decodedToken = jwtDecode(storedToken);
+        setUser({ username: decodedToken.username });
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+  }, []);
+
   const handleAuth = async () => {
     try {
-      const endpoint = isRegister ? 'http://localhost:5000/auth/register' : 'http://localhost:5000/auth/login';
+      const endpoint = isRegister
+        ? 'http://localhost:5000/auth/register'
+        : 'http://localhost:5000/auth/login';
+
       const response = await axios.post(endpoint, formData);
 
       setUser(response.data.user);
+
+      localStorage.setItem('authToken', response.data.token);
 
       setFormData({
         username: '',
@@ -28,6 +48,7 @@ const AuthComponent = () => {
 
   const handleLogout = () => {
     setUser(null);
+    localStorage.removeItem('authToken');
   };
 
   return (

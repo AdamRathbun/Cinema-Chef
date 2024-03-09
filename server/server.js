@@ -7,7 +7,6 @@ const path = require('path');
 const fs = require('fs').promises;
 const authController = require('./controllers/authController');
 const { authenticateToken } = require('./middleware/authMiddleware');
-// 3.6
 const movieController = require('./controllers/movieController');
 
 const app = express();
@@ -102,14 +101,18 @@ app.post('/upload-image', authenticateToken, upload.single('image'), async (req,
 
 app.post('/recipes', authenticateToken, upload.none(), async (req, res) => {
   const { title, ingredients, instructions, movie_title, imageUrl } = req.body;
-  try {
-    console.log('Received data for new recipe:', { title, ingredients, instructions, movie_title, imageUrl });
 
+  const userId = req.user.id;
+
+  try {
+    console.log('User ID before SQL query:', userId);
     const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [title, ingredients, instructions, movie_title, imageUrl]
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [title, ingredients, instructions, movie_title, imageUrl, userId]
     );
+
     const newRecipe = result.rows[0];
+
     res.status(201).json(newRecipe);
   } catch (err) {
     console.error(err);

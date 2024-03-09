@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import DeleteRecipe from '../DeleteRecipe/DeleteRecipe';
 import UpdateRecipe from '../UpdateRecipe/UpdateRecipe';
 
+import AuthComponent from '../Auth/Auth';
+
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -13,6 +15,8 @@ function Recipe() {
 
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const authToken = localStorage.getItem('authToken');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +45,16 @@ function Recipe() {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://localhost:5000/recipes/${id}`);
+      if (!authToken) {
+        console.error('Authentication token is missing.');
+        return;
+      }
+
+      const response = await axios.delete(`http://localhost:5000/recipes/${id}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
 
       if (response.data.deletedRecipe) {
         console.log('Deleted Recipe:', response.data.deletedRecipe);
@@ -69,6 +82,11 @@ function Recipe() {
     setIsUpdating(true);
 
     try {
+      if (!authToken) {
+        console.error('Authentication token is missing.');
+        return;
+      }
+
       if (!recipe) {
         console.error('Recipe data not available.');
         return;
@@ -79,7 +97,11 @@ function Recipe() {
         value: updatedValue,
       };
 
-      const response = await axios.put(`http://localhost:5000/recipes/${id}`, updateData);
+      const response = await axios.put(`http://localhost:5000/recipes/${id}`, updateData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
 
       console.log(`Recipe ${field} updated:`, response.data);
 
@@ -99,6 +121,8 @@ function Recipe() {
     <div className="recipe">
       {recipe && (
         <>
+          <AuthComponent />
+
           <h2 className="recipe_title">{recipe.title}</h2>
           <button onClick={toggleMovieInfo}>
             {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
@@ -120,27 +144,34 @@ function Recipe() {
           <p className="recipe_instructions">
             <strong>Instructions:</strong> {recipe.instructions}
           </p>
-          <UpdateRecipe field="title" initialValue={recipe.title} id={id} onUpdate={handleUpdate} />
+          <UpdateRecipe
+            field="title"
+            initialValue={recipe.title}
+            id={id} onUpdate={handleUpdate}
+            authToken={authToken} />
           <UpdateRecipe
             field="ingredients"
             initialValue={recipe.ingredients}
             id={id}
             onUpdate={handleUpdate}
+            authToken={authToken}
           />
           <UpdateRecipe
             field="instructions"
             initialValue={recipe.instructions}
             id={id}
             onUpdate={handleUpdate}
+            authToken={authToken}
           />
           <UpdateRecipe
             field="movie_title"
             initialValue={recipe.movie_title}
             id={id}
             onUpdate={handleUpdate}
+            authToken={authToken}
           />
-          <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} />
-          <DeleteRecipe recipeId={id} onDelete={handleDelete} />
+          <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
+          <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
           {showMovieInfo && movieInfo && (
             <>
               <h4>More about this movie:</h4>

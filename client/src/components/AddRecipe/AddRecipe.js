@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
+import AuthComponent from '../Auth/Auth';
 
 function AddRecipe() {
   const [formData, setFormData] = useState({
@@ -7,10 +9,12 @@ function AddRecipe() {
     ingredients: '',
     instructions: '',
     movie_title: '',
-    image: null
+    image: null,
   });
 
   const [message, setMessage] = useState(null);
+
+  const authToken = localStorage.getItem('authToken');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,8 +35,6 @@ function AddRecipe() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
-
     try {
       const form = new FormData();
       form.append('title', formData.title);
@@ -47,6 +49,7 @@ function AddRecipe() {
       const uploadResponse = await axios.post('http://localhost:5000/upload-image', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
@@ -65,6 +68,7 @@ function AddRecipe() {
       await axios.post('http://localhost:5000/recipes', recipeFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
@@ -77,6 +81,7 @@ function AddRecipe() {
 
   return (
     <div>
+      <AuthComponent />
       <h2>Add Recipe</h2>
       <form onSubmit={handleSubmit}>
         <div>
