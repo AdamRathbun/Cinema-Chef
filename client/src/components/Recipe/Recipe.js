@@ -4,8 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import DeleteRecipe from '../DeleteRecipe/DeleteRecipe';
 import UpdateRecipe from '../UpdateRecipe/UpdateRecipe';
 
-import AuthComponent from '../Auth/Auth';
-
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +17,7 @@ function Recipe() {
   const authToken = localStorage.getItem('authToken');
 
   useEffect(() => {
+
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/recipes/${id}`);
@@ -29,7 +28,12 @@ function Recipe() {
         if (movieTitle) {
           const movieResponse = await axios.get(`http://localhost:5000/api/movies/search?name=${movieTitle}`);
           const movieData = movieResponse.data[0];
-          setMovieInfo(movieData);
+
+          if (movieData && movieData.title.toLowerCase() === movieTitle.toLowerCase()) {
+            setMovieInfo(movieData);
+          } else {
+            setMovieInfo(null);
+          }
         }
 
         setIsLoading(false);
@@ -121,8 +125,6 @@ function Recipe() {
     <div className="recipe">
       {recipe && (
         <>
-          <AuthComponent />
-
           <h2 className="recipe_title">{recipe.title}</h2>
           <button onClick={toggleMovieInfo}>
             {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}

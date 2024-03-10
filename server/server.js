@@ -54,7 +54,7 @@ app.get('/recipes', async (req, res) => {
 app.get('/top-liked-recipes', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM recipes ORDER BY likes DESC LIMIT 50'
+      'SELECT * FROM recipes ORDER BY likes DESC LIMIT 30'
     );
 
     const topLikedRecipes = result.rows;
@@ -81,6 +81,21 @@ app.get('/recipes/:id', async (req, res) => {
   }
 });
 
+// 3.9
+app.get('/user-recipes', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE user_id = $1', [userId]);
+    const userRecipes = result.rows;
+
+    res.json(userRecipes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching user-specific recipes');
+  }
+});
+
 // need to update later with image hosting url
 app.post('/upload-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
@@ -99,7 +114,7 @@ app.post('/upload-image', authenticateToken, upload.single('image'), async (req,
   }
 });
 
-app.post('/recipes', authenticateToken, upload.none(), async (req, res) => {
+app.post('/recipes-with-image', authenticateToken, upload.single('image'), async (req, res) => {
   const { title, ingredients, instructions, movie_title, imageUrl } = req.body;
 
   const userId = req.user.id;
@@ -120,8 +135,30 @@ app.post('/recipes', authenticateToken, upload.none(), async (req, res) => {
   }
 });
 
+app.post('/recipes-without-image', authenticateToken, upload.none(), async (req, res) => {
+  const { title, ingredients, instructions, movie_title } = req.body;
+
+  const userId = req.user.id;
+
+  try {
+    console.log('User ID before SQL query:', userId);
+    const result = await pool.query(
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, ingredients, instructions, movie_title, userId]
+    );
+
+    const newRecipe = result.rows[0];
+
+    res.status(201).json(newRecipe);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error creating a new recipe');
+  }
+});
+
 app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, res) => {
   const { id } = req.params;
+  const userId = req.user.id;
 
   try {
     const existingRecipeResult = await pool.query('SELECT * FROM recipes WHERE recipe_id = $1', [id]);
@@ -131,7 +168,9 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
       return res.status(404).json({ message: 'Recipe not found.' });
     }
 
-    console.log('Received Field:', req.body.field);
+    if (existingRecipe.user_id !== userId) {
+      return res.status(403).json({ message: 'Cannot update the recipe if you are not the creator.' });
+    }
 
     if (req.file && req.body.field === 'image') {
       const oldImageUrl = existingRecipe.image;
@@ -198,13 +237,22 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
 
 app.delete('/recipes/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
-  try {
-    const result = await pool.query('DELETE FROM recipes WHERE recipe_id = $1 RETURNING *', [id]);
-    const deletedRecipe = result.rows[0];
+  const userId = req.user.id;
 
-    if (!deletedRecipe) {
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE recipe_id = $1', [id]);
+    const recipeToDelete = result.rows[0];
+
+    if (!recipeToDelete) {
       return res.status(404).json({ message: 'Recipe not found.' });
     }
+
+    if (recipeToDelete.user_id !== userId) {
+      return res.status(403).json({ message: 'Cannot delete recipe if you are not the creator.' });
+    }
+
+    const deleteResult = await pool.query('DELETE FROM recipes WHERE recipe_id = $1 RETURNING *', [id]);
+    const deletedRecipe = deleteResult.rows[0];
 
     const imageUrl = deletedRecipe.image;
 
@@ -212,11 +260,8 @@ app.delete('/recipes/:id', authenticateToken, async (req, res) => {
     if (imageUrl) {
       const imagePath = path.join(__dirname, 'upload-image', path.basename(imageUrl));
 
-      try {
-        await fs.unlink(imagePath);
-      } catch (error) {
-        console.error('Error deleting image file:', error);
-      }
+      await fs.unlink(imagePath);
+      console.log('Image file deleted from server:', imagePath);
     } else {
       console.log('Recipe has no image to delete.');
     }

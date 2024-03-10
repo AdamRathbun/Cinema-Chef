@@ -35,3 +35,4 @@ const DeleteRecipe = ({ recipeId, onDelete, authToken }) => {
 };
 
 export default DeleteRecipe;
+

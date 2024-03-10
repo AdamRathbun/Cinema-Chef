@@ -31,7 +31,22 @@ const getRecipeById = async (req, res) => {
   }
 };
 
-const addRecipe = async (req, res) => {
+// 3.9
+const getUserRecipes = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE user_id = $1', [userId]);
+    const userRecipes = result.rows;
+
+    res.json(userRecipes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching user-specific recipes');
+  }
+};
+
+const addRecipeWithoutImage = async (req, res) => {
   const { title, ingredients, instructions, movie_title } = req.body;
   try {
     const result = await pool.query(
@@ -42,7 +57,43 @@ const addRecipe = async (req, res) => {
     res.status(201).json(newRecipe);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error creating a new recipe');
+    res.status(500).send('Error creating a new recipe without image');
+  }
+};
+
+const addRecipeWithImage = async (req, res) => {
+  const { title, ingredients, instructions, movie_title, imageUrl } = req.body;
+
+  try {
+    const result = await pool.query(
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, ingredients, instructions, movie_title, imageUrl]
+    );
+    const newRecipe = result.rows[0];
+    res.status(201).json(newRecipe);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error creating a new recipe with image');
+  }
+};
+
+const uploadImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image uploaded.' });
+    }
+
+    const filename = req.file.filename;
+    const image = `http://localhost:5000/upload-image/${filename}`;
+
+    const recipe_id = req.body.recipe_id;
+    const updateQuery = 'UPDATE recipes SET image = $1 WHERE recipe_id = $2';
+    await pool.query(updateQuery, [image, recipe_id]);
+
+    res.json({ image });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -93,27 +144,6 @@ const updateRecipe = async (req, res) => {
   }
 };
 
-
-const uploadImage = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No image uploaded.' });
-    }
-
-    const filename = req.file.filename;
-    const image = `http://localhost:5000/upload-image/${filename}`;
-
-    const recipe_id = req.body.recipe_id;
-    const updateQuery = 'UPDATE recipes SET image = $1 WHERE recipe_id = $2';
-    await pool.query(updateQuery, [image, recipe_id]);
-
-    res.json({ image });
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
-
 const deleteRecipe = async (req, res) => {
   const { id } = req.params;
   try {
@@ -129,7 +159,9 @@ const deleteRecipe = async (req, res) => {
 module.exports = {
   getAllRecipes,
   getRecipeById,
-  addRecipe,
+  getUserRecipes,
+  addRecipeWithImage,
+  addRecipeWithoutImage,
   updateRecipe,
   deleteRecipe,
   uploadImage,

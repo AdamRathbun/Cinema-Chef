@@ -41,6 +41,8 @@ const AuthComponent = () => {
         username: '',
         password: '',
       });
+
+      window.location.reload();
     } catch (error) {
       console.error(`Error during ${isRegister ? 'registration' : 'login'}:`, error);
     }
@@ -49,6 +51,8 @@ const AuthComponent = () => {
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('authToken');
+
+    window.location.reload();
   };
 
   return (

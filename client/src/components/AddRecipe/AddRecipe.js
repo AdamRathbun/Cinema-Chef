@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import AuthComponent from '../Auth/Auth';
-
 function AddRecipe() {
   const [formData, setFormData] = useState({
     title: '',
@@ -44,33 +42,30 @@ function AddRecipe() {
 
       if (formData.image) {
         form.append('image', formData.image);
+
+        const uploadResponse = await axios.post('http://localhost:5000/upload-image', form, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        const imageUrl = uploadResponse.data.imageUrl;
+
+        await axios.post('http://localhost:5000/recipes-with-image', { ...formData, imageUrl }, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+      } else {
+        await axios.post('http://localhost:5000/recipes-without-image', form, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
       }
-
-      const uploadResponse = await axios.post('http://localhost:5000/upload-image', form, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-
-      const imageUrl = uploadResponse.data.imageUrl;
-
-      const recipeFormData = new FormData();
-      recipeFormData.append('title', formData.title);
-      recipeFormData.append('ingredients', formData.ingredients);
-      recipeFormData.append('instructions', formData.instructions);
-      recipeFormData.append('movie_title', formData.movie_title);
-
-      if (imageUrl) {
-        recipeFormData.append('imageUrl', imageUrl);
-      }
-
-      await axios.post('http://localhost:5000/recipes', recipeFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
 
       setMessage('Recipe added!');
     } catch (error) {
@@ -79,9 +74,9 @@ function AddRecipe() {
     }
   };
 
+
   return (
     <div>
-      <AuthComponent />
       <h2>Add Recipe</h2>
       <form onSubmit={handleSubmit}>
         <div>

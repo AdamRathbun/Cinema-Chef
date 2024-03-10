@@ -52,8 +52,6 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
         formData.append('value', value.toString());
       }
 
-      console.log('FormData:', formData);
-
       const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
