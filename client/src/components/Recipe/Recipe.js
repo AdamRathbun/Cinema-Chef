@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import DeleteRecipe from '../DeleteRecipe/DeleteRecipe';
 import UpdateRecipe from '../UpdateRecipe/UpdateRecipe';
+// 3.10
+import { jwtDecode } from 'jwt-decode';
+
 
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
@@ -10,6 +13,10 @@ function Recipe() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [movieInfo, setMovieInfo] = useState(null);
   const [showMovieInfo, setShowMovieInfo] = useState(false);
+
+  // 3.10
+  const [user, setUser] = useState(null);
+
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -46,6 +53,20 @@ function Recipe() {
     fetchData();
 
   }, [id]);
+
+  // 3.10
+  useEffect(() => {
+    const storedToken = localStorage.getItem('authToken');
+
+    if (storedToken) {
+      try {
+        const decodedToken = jwtDecode(storedToken);
+        setUser(decodedToken.userId);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+  }, []);
 
   const handleDelete = async () => {
     try {
@@ -121,59 +142,79 @@ function Recipe() {
     setShowMovieInfo(!showMovieInfo);
   };
 
+  const isUserOwner = user && recipe && user === recipe.user_id;
+
   return (
     <div className="recipe">
       {recipe && (
         <>
-          <h2 className="recipe_title">{recipe.title}</h2>
+          <h2 className="recipe_title">
+            {recipe.title}
+            {isUserOwner && (
+              <UpdateRecipe
+                field="title"
+                initialValue={recipe.title}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </h2>
           <button onClick={toggleMovieInfo}>
             {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
           </button>
-          <p className="recipe_movie_title">
+          <div className="recipe_movie_title">
             <strong>Movie Title:</strong> {recipe.movie_title}
-          </p>
-          {recipe.image && <img className="recipe_image" src={recipe.image} alt={recipe.title} />}
-          {movieInfo && showMovieInfo && movieInfo.poster_path && (
-            <img
-              className="recipe_movie_poster"
-              src={`https://image.tmdb.org/t/p/w500${movieInfo.poster_path}`}
-              alt={movieInfo.title}
-            />
-          )}
-          <p className="recipe_ingredients">
+            {isUserOwner && (
+              <UpdateRecipe
+                field="movie_title"
+                initialValue={recipe.movie_title}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          <div>
+            {recipe.image && <img className="recipe_image" src={recipe.image} alt={recipe.title} />}
+            {movieInfo && showMovieInfo && movieInfo.poster_path && (
+              <img
+                className="recipe_movie_poster"
+                src={`https://image.tmdb.org/t/p/w500${movieInfo.poster_path}`}
+                alt={movieInfo.title}
+              />
+            )}
+            {isUserOwner && (
+              <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
+            )}
+          </div>
+          <div className="recipe_ingredients">
             <strong>Ingredients:</strong> {recipe.ingredients}
-          </p>
-          <p className="recipe_instructions">
+            {isUserOwner && (
+              <UpdateRecipe
+                field="ingredients"
+                initialValue={recipe.ingredients}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          <div className="recipe_instructions">
             <strong>Instructions:</strong> {recipe.instructions}
-          </p>
-          <UpdateRecipe
-            field="title"
-            initialValue={recipe.title}
-            id={id} onUpdate={handleUpdate}
-            authToken={authToken} />
-          <UpdateRecipe
-            field="ingredients"
-            initialValue={recipe.ingredients}
-            id={id}
-            onUpdate={handleUpdate}
-            authToken={authToken}
-          />
-          <UpdateRecipe
-            field="instructions"
-            initialValue={recipe.instructions}
-            id={id}
-            onUpdate={handleUpdate}
-            authToken={authToken}
-          />
-          <UpdateRecipe
-            field="movie_title"
-            initialValue={recipe.movie_title}
-            id={id}
-            onUpdate={handleUpdate}
-            authToken={authToken}
-          />
-          <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
-          <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
+            {isUserOwner && (
+              <UpdateRecipe
+                field="instructions"
+                initialValue={recipe.instructions}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          {isUserOwner && (
+            <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
+          )}
           {showMovieInfo && movieInfo && (
             <>
               <h4>More about this movie:</h4>
