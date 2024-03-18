@@ -5,6 +5,7 @@ import Navbar from './components/Navbar/Navbar';
 import AddRecipe from './components/AddRecipe/AddRecipe'
 import Recipe from './components/Recipe/Recipe'
 import YourRecipes from './components/YourRecipes/YourRecipes';
+import SearchResults from './components/SearchResults/SearchResults';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path='/add-recipe' element={<AddRecipe />} />
         <Route path='/user-recipes' element={<YourRecipes />} />
         <Route path='/recipes/:id' element={<Recipe />} />
+        <Route path="/search/:searchType/:searchTerm" element={<SearchResults />} />
       </Routes>
     </Router>
   );

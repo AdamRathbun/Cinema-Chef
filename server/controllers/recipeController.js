@@ -31,7 +31,6 @@ const getRecipeById = async (req, res) => {
   }
 };
 
-// 3.9
 const getUserRecipes = async (req, res) => {
   const userId = req.user.id;
 
@@ -43,6 +42,48 @@ const getUserRecipes = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching user-specific recipes');
+  }
+};
+
+const searchByMealType = async (req, res) => {
+  const { mealType } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE meal_type = $1', [mealType]);
+    const recipes = result.rows;
+
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes by meal type:', error);
+    res.status(500).json({ error: 'An error occurred while searching recipes by meal type' });
+  }
+};
+
+const searchByDietaryRestriction = async (req, res) => {
+  const { dietaryRestriction } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE dietary_restriction = $1', [dietaryRestriction]);
+    const recipes = result.rows;
+
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes by dietary restriction:', error);
+    res.status(500).json({ error: 'An error occurred while searching recipes by dietary restriction' });
+  }
+};
+
+const searchByMovieGenre = async (req, res) => {
+  const { movieGenre } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE movie_genre = $1', [movieGenre]);
+    const recipes = result.rows;
+
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes by movie genre:', error);
+    res.status(500).json({ error: 'An error occurred while searching recipes by movie genre' });
   }
 };
 
@@ -165,5 +206,8 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   uploadImage,
+  searchByMealType,
+  searchByDietaryRestriction,
+  searchByMovieGenre,
 };
 

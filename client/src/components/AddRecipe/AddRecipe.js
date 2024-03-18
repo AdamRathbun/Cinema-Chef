@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 function AddRecipe() {
@@ -8,10 +8,12 @@ function AddRecipe() {
     instructions: '',
     movie_title: '',
     image: null,
+    meal_type: '',
+    dietary_restriction: 'none',
+    movie_genre: '',
   });
 
   const [message, setMessage] = useState(null);
-
   const authToken = localStorage.getItem('authToken');
 
   const handleChange = (e) => {
@@ -39,6 +41,9 @@ function AddRecipe() {
       form.append('ingredients', formData.ingredients);
       form.append('instructions', formData.instructions);
       form.append('movie_title', formData.movie_title);
+      form.append('meal_type', formData.meal_type); // Append meal type to form data
+      form.append('dietary_restriction', formData.dietary_restriction); // Append dietary restriction to form data
+      form.append('movie_genre', formData.movie_genre); // Append movie genre to form data
 
       if (formData.image) {
         form.append('image', formData.image);
@@ -73,7 +78,6 @@ function AddRecipe() {
       setMessage('Error adding the recipe—try again.');
     }
   };
-
 
   return (
     <div>
@@ -117,12 +121,44 @@ function AddRecipe() {
           />
         </div>
         <div>
+          <label>Meal Type</label>
+          <select name='meal_type' value={formData.meal_type} onChange={handleChange}>
+            <option value=''>Select Meal Type</option>
+            <option value='breakfast'>Breakfast</option>
+            <option value='lunch'>Lunch</option>
+            <option value='dinner'>Dinner</option>
+            <option value='dessert'>Dessert</option>
+          </select>
+        </div>
+        <div>
+          <label>Dietary Restriction</label>
+          <select name='dietary_restriction' value={formData.dietary_restriction} onChange={handleChange}>
+            <option value=''>Select Dietary Restriction</option>
+            <option value='vegan'>Vegan</option>
+            <option value='vegetarian'>Vegetarian</option>
+            <option value='gluten_free'>Gluten-free</option>
+            <option value='none'>None</option>
+          </select>
+        </div>
+        <div>
+          <label>Movie Genre</label>
+          <select name='movie_genre' value={formData.movie_genre} onChange={handleChange}>
+            <option value=''>Select Movie Genre</option>
+            <option value='action'>Action</option>
+            <option value='comedy'>Comedy</option>
+            <option value='drama'>Drama</option>
+            <option value='thriller'>Thriller</option>
+            <option value='horror'>Horror</option>
+            <option value='sci_fi'>Sci-Fi</option>
+            <option value='fantasy'>Fantasy</option>
+            <option value='romance'>Romance</option>
+            <option value='animated'>Animated</option>
+            <option value='documentary'>Documentary</option>
+          </select>
+        </div>
+        <div>
           <label>Image</label>
-          <input
-            type='file'
-            name='image'
-            onChange={handleImageChange}
-          />
+          <input type='file' name='image' onChange={handleImageChange} />
         </div>
         <button type='submit'>Submit</button>
       </form>

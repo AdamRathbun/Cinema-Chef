@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import SearchTag from '../SearchTag/SearchTag';
 
 function Home() {
   const [likedRecipes, setLikedRecipes] = useState([]);
+  const navigate = useNavigate();
+
+  const mealTypes = ['breakfast', 'lunch', 'dinner', 'dessert'];
+  const dietaryRestrictions = ['vegan', 'vegetarian', 'gluten_free', 'none'];
+  const movieGenres = ['action', 'comedy', 'drama', 'thriller', 'horror', 'sci-fi', 'fantasy', 'romance', 'animated', 'documentary'];
 
   useEffect(() => {
     axios.get('http://localhost:5000/top-liked-recipes')
@@ -16,10 +22,28 @@ function Home() {
       });
   }, []);
 
+  const handleSearch = async (tag, searchType) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/recipes/${searchType}/${tag}`);
+      console.log(`Recipes with ${searchType} ${tag}:`, response.data);
+      navigate(`/search/${searchType}/${tag}`)
+    } catch (error) {
+      console.error(`Error fetching recipes with ${searchType}:`, error);
+    }
+  };
+
   return (
     <div>
       <h1>Cinema Chef</h1>
       <p>Explore culinary recipes based on cinematic masterpieces</p>
+
+      <h4>Search by meal type:</h4>
+      <SearchTag tags={mealTypes} onSearch={(tag) => handleSearch(tag, 'meal-type')} />
+      <h4>Search by dietary restriction:</h4>
+      <SearchTag tags={dietaryRestrictions} onSearch={(tag) => handleSearch(tag, 'dietary-restriction')} />
+      <h4>Search by movie genre:</h4>
+      <SearchTag tags={movieGenres} onSearch={(tag) => handleSearch(tag, 'movie-genre')} />
+
       <h2>Most Liked Recipes</h2>
       <ul>
         {likedRecipes.map((recipe) => (

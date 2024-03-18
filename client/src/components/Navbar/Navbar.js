@@ -14,7 +14,7 @@ function Navbar() {
           <Link to="/user-recipes">Your recipes</Link>
         </li>
         <li className='navbar-item'>
-          <Link to="/add-recipe">Add Recipe</Link>
+          <Link to="/add-recipe">Add a recipe</Link>
         </li>
         <li>
           <AuthComponent />

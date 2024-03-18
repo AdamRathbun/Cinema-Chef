@@ -3,9 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import DeleteRecipe from '../DeleteRecipe/DeleteRecipe';
 import UpdateRecipe from '../UpdateRecipe/UpdateRecipe';
-// 3.10
 import { jwtDecode } from 'jwt-decode';
-
 
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
@@ -13,18 +11,12 @@ function Recipe() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [movieInfo, setMovieInfo] = useState(null);
   const [showMovieInfo, setShowMovieInfo] = useState(false);
-
-  // 3.10
   const [user, setUser] = useState(null);
-
-
   const navigate = useNavigate();
   const { id } = useParams();
-
   const authToken = localStorage.getItem('authToken');
 
   useEffect(() => {
-
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/recipes/${id}`);
@@ -51,10 +43,8 @@ function Recipe() {
     };
 
     fetchData();
-
   }, [id]);
 
-  // 3.10
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
 
@@ -206,6 +196,43 @@ function Recipe() {
               <UpdateRecipe
                 field="instructions"
                 initialValue={recipe.instructions}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          <div className="recipe_meal_type">
+            <strong>Meal Type:</strong> {recipe.meal_type}
+            {isUserOwner && (
+              <UpdateRecipe
+                field="meal_type"
+                initialValue={recipe.meal_type}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          <div className="recipe_dietary_restriction">
+            <strong>Dietary Restriction:</strong> {recipe.dietary_restriction}
+            {isUserOwner && (
+              <UpdateRecipe
+                field="dietary_restriction"
+                initialValue={recipe.dietary_restriction}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          <div className="recipe_movie_genre">
+            <strong>Movie Genre:</strong>{" "}
+            {recipe.movie_genre === "sci_fi" ? "sci-fi" : recipe.movie_genre}
+            {isUserOwner && (
+              <UpdateRecipe
+                field="movie_genre"
+                initialValue={recipe.movie_genre}
                 id={id}
                 onUpdate={handleUpdate}
                 authToken={authToken}

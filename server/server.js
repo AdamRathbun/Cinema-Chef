@@ -81,7 +81,6 @@ app.get('/recipes/:id', async (req, res) => {
   }
 });
 
-// 3.9
 app.get('/user-recipes', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
@@ -93,6 +92,48 @@ app.get('/user-recipes', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching user-specific recipes');
+  }
+});
+
+app.get('/recipes/meal-type/:mealType', async (req, res) => {
+  const { mealType } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE meal_type = $1', [mealType]);
+    const recipes = result.rows;
+
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes by meal type:', error);
+    res.status(500).json({ error: 'An error occurred while searching recipes by meal type' });
+  }
+});
+
+app.get('/recipes/dietary-restriction/:dietaryRestriction', async (req, res) => {
+  const { dietaryRestriction } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE dietary_restriction = $1', [dietaryRestriction]);
+    const recipes = result.rows;
+
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes by dietary restriction:', error);
+    res.status(500).json({ error: 'An error occurred while searching recipes by dietary restriction' });
+  }
+});
+
+app.get('/recipes/movie-genre/:movieGenre', async (req, res) => {
+  const { movieGenre } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipes WHERE movie_genre = $1', [movieGenre]);
+    const recipes = result.rows;
+
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes by movie genre:', error);
+    res.status(500).json({ error: 'An error occurred while searching recipes by movie genre' });
   }
 });
 
@@ -115,15 +156,15 @@ app.post('/upload-image', authenticateToken, upload.single('image'), async (req,
 });
 
 app.post('/recipes-with-image', authenticateToken, upload.single('image'), async (req, res) => {
-  const { title, ingredients, instructions, movie_title, imageUrl } = req.body;
+  const { title, ingredients, instructions, movie_title, imageUrl, meal_type, dietary_restriction, movie_genre } = req.body;
 
   const userId = req.user.id;
 
   try {
     console.log('User ID before SQL query:', userId);
     const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [title, ingredients, instructions, movie_title, imageUrl, userId]
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image, user_id, meal_type, dietary_restriction, movie_genre) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+      [title, ingredients, instructions, movie_title, imageUrl, userId, meal_type, dietary_restriction, movie_genre]
     );
 
     const newRecipe = result.rows[0];
@@ -136,15 +177,15 @@ app.post('/recipes-with-image', authenticateToken, upload.single('image'), async
 });
 
 app.post('/recipes-without-image', authenticateToken, upload.none(), async (req, res) => {
-  const { title, ingredients, instructions, movie_title } = req.body;
+  const { title, ingredients, instructions, movie_title, meal_type, dietary_restriction, movie_genre } = req.body;
 
   const userId = req.user.id;
 
   try {
     console.log('User ID before SQL query:', userId);
     const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [title, ingredients, instructions, movie_title, userId]
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, user_id, meal_type, dietary_restriction, movie_genre) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [title, ingredients, instructions, movie_title, userId, meal_type, dietary_restriction, movie_genre]
     );
 
     const newRecipe = result.rows[0];
@@ -192,6 +233,9 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
       instructions: 'instructions',
       movie_title: 'movie_title',
       image: 'image',
+      meal_type: 'meal_type',
+      dietary_restriction: 'dietary_restriction',
+      movie_genre: 'movie_genre',
     };
 
     const { field, value } = req.body;
@@ -210,9 +254,6 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
       const updateQuery = `UPDATE recipes SET ${column} = $1 WHERE recipe_id = $2 RETURNING *`;
       const queryParams = [newImageUrl, id];
 
-      console.log('Update Query:', updateQuery);
-      console.log('Query Parameters:', queryParams);
-
       const updateResult = await pool.query(updateQuery, queryParams);
       const updatedRecipe = updateResult.rows[0];
 
@@ -221,9 +262,6 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
 
     const updateQuery = `UPDATE recipes SET ${column} = $1 WHERE recipe_id = $2 RETURNING *`;
     const queryParams = [value, id];
-
-    console.log('Update Query:', updateQuery);
-    console.log('Query Parameters:', queryParams);
 
     const updateResult = await pool.query(updateQuery, queryParams);
     const updatedRecipe = updateResult.rows[0];
