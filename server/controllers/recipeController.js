@@ -87,6 +87,21 @@ const searchByMovieGenre = async (req, res) => {
   }
 };
 
+const searchRecipes = async (req, res) => {
+  const { searchTerm } = req.params;
+
+  try {
+    let result;
+    result = await pool.query('SELECT * FROM recipes WHERE LOWER(title) LIKE $1', [`%${searchTerm.toLowerCase()}%`]);
+
+    const recipes = result.rows;
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes:', error);
+    res.status(500).json({ error: 'An error occurred while searching recipes' });
+  }
+};
+
 const addRecipeWithoutImage = async (req, res) => {
   const { title, ingredients, instructions, movie_title } = req.body;
   try {
@@ -209,5 +224,6 @@ module.exports = {
   searchByMealType,
   searchByDietaryRestriction,
   searchByMovieGenre,
+  searchRecipes,
 };
 

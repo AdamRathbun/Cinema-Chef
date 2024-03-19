@@ -24,9 +24,11 @@ function Home() {
 
   const handleSearch = async (tag, searchType) => {
     try {
-      const response = await axios.get(`http://localhost:5000/recipes/${searchType}/${tag}`);
-      console.log(`Recipes with ${searchType} ${tag}:`, response.data);
-      navigate(`/search/${searchType}/${tag}`)
+      const modifiedTag = searchType === 'movie-genre' && tag === 'sci-fi' ? 'sci_fi' : tag;
+
+      const response = await axios.get(`http://localhost:5000/recipes/${searchType}/${modifiedTag}`);
+      console.log(`Recipes with ${searchType} ${modifiedTag}:`, response.data);
+      navigate(`/search/${searchType}/${modifiedTag}`)
     } catch (error) {
       console.error(`Error fetching recipes with ${searchType}:`, error);
     }

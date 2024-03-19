@@ -15,12 +15,24 @@ const AuthComponent = () => {
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
 
+    const logoutUser = () => {
+      setUser(null);
+      localStorage.removeItem('authToken');
+    };
+
     if (storedToken) {
       try {
         const decodedToken = jwtDecode(storedToken);
-        setUser({ username: decodedToken.username });
+        const currentTime = Date.now() / 1000;
+
+        if (decodedToken.exp < currentTime) {
+          logoutUser();
+        } else {
+          setUser({ username: decodedToken.username });
+        }
       } catch (error) {
         console.error('Error decoding token:', error);
+        logoutUser();
       }
     }
   }, []);

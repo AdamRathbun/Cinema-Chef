@@ -137,7 +137,22 @@ app.get('/recipes/movie-genre/:movieGenre', async (req, res) => {
   }
 });
 
-// need to update later with image hosting url
+app.get('/recipes/search/recipe-name/:searchTerm', async (req, res) => {
+  const { searchTerm } = req.params;
+
+  try {
+    let result;
+    result = await pool.query('SELECT * FROM recipes WHERE LOWER(title) LIKE $1', [`%${searchTerm.toLowerCase()}%`]);
+
+    const recipes = result.rows;
+    res.json(recipes);
+  } catch (err) {
+    console.error('Error searching recipes:', err);
+    res.status(500).send('Error fetching recipes');
+  }
+});
+
+// *need to update later with image hosting url
 app.post('/upload-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {

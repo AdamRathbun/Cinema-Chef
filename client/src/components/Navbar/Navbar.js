@@ -2,6 +2,7 @@ import React from 'react';
 import './Navbar.css';
 import { Link } from 'react-router-dom';
 import AuthComponent from '../Auth/Auth';
+import SearchBar from '../SearchBar/SearchBar';
 
 function Navbar() {
   return (
@@ -18,6 +19,9 @@ function Navbar() {
         </li>
         <li>
           <AuthComponent />
+        </li>
+        <li>
+          <SearchBar />
         </li>
       </ul>
     </nav>
