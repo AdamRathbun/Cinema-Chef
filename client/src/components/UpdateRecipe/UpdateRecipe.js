@@ -23,6 +23,10 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
     setValue(e.target.value);
   };
 
+  const handleFileChange = (e) => {
+    setValue(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -39,7 +43,11 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
       const formData = new FormData();
 
       formData.append('field', field);
-      formData.append('value', value);
+      if (field === 'image') {
+        formData.append('image', value);
+      } else {
+        formData.append('value', value);
+      }
 
       const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData, {
         headers: {
@@ -65,7 +73,7 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
           {field === 'image' ? (
             <>
               <label>Choose new image</label>
-              <input type="file" onChange={(e) => setValue(e.target.files[0])} accept="image/*" />
+              <input type="file" onChange={handleFileChange} accept="image/*" />
             </>
           ) : (
             <>
@@ -119,3 +127,4 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
 }
 
 export default UpdateRecipe;
+
