@@ -212,6 +212,93 @@ app.post('/recipes-without-image', authenticateToken, upload.none(), async (req,
   }
 });
 
+// 3.19
+// app.post('/save-recipe', async (req, res) => {
+//   const { user_id, recipe_id } = req.body;
+
+//   try {
+//     const result = await pool.query(
+//       'INSERT INTO saved_recipes (user_id, recipe_id) VALUES ($1, $2) RETURNING *',
+//       [user_id, recipe_id]
+//     );
+
+//     const savedRecipe = result.rows[0];
+//     res.status(201).json(savedRecipe);
+//   } catch (error) {
+//     console.error('Error saving recipe:', error);
+//     res.status(500).json({ error: 'Error saving recipe' });
+//   }
+// });
+app.post('/save-recipe', async (req, res) => {
+  const { user_id, recipe_id } = req.body;
+
+  try {
+    const existingSavedRecipe = await pool.query(
+      'SELECT * FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2',
+      [user_id, recipe_id]
+    );
+
+    if (existingSavedRecipe.rows.length > 0) {
+      return res.status(400).json({ error: 'Recipe already saved by the user' });
+    }
+
+    const result = await pool.query(
+      'INSERT INTO saved_recipes (user_id, recipe_id) VALUES ($1, $2) RETURNING *',
+      [user_id, recipe_id]
+    );
+
+    const savedRecipe = result.rows[0];
+    res.status(201).json(savedRecipe);
+  } catch (error) {
+    console.error('Error saving recipe:', error);
+    res.status(500).json({ error: 'Error saving recipe' });
+  }
+});
+
+app.delete('/unsave-recipe', async (req, res) => {
+  const { user_id, recipe_id } = req.body;
+
+  try {
+    const result = await pool.query(
+      'DELETE FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2 RETURNING *',
+      [user_id, recipe_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Recipe not found in saved recipes' });
+    }
+
+    res.status(200).json({ message: 'Recipe successfully removed from saved recipes' });
+  } catch (error) {
+    console.error('Error unsaving recipe:', error);
+    res.status(500).json({ error: 'Error unsaving recipe' });
+  }
+});
+
+app.get('/saved-recipes', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const query = {
+      text: `
+        SELECT recipes.*
+        FROM recipes
+        JOIN saved_recipes ON recipes.recipe_id = saved_recipes.recipe_id
+        WHERE saved_recipes.user_id = $1
+      `,
+      values: [userId],
+    };
+
+    const result = await pool.query(query);
+    const savedRecipes = result.rows;
+
+    res.json(savedRecipes);
+  } catch (error) {
+    console.error('Error fetching saved recipes:', error);
+    res.status(500).json({ error: 'An error occurred while fetching saved recipes' });
+  }
+});
+
 app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;

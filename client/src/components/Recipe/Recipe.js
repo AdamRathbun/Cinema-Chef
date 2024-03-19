@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import DeleteRecipe from '../DeleteRecipe/DeleteRecipe';
 import UpdateRecipe from '../UpdateRecipe/UpdateRecipe';
+import SaveRecipe from '../SaveRecipe/SaveRecipe';
+import UnsaveRecipe from '../SaveRecipe/UnsaveRecipe';
 import { jwtDecode } from 'jwt-decode';
 
 function Recipe() {
@@ -133,6 +135,7 @@ function Recipe() {
   };
 
   const isUserOwner = user && recipe && user === recipe.user_id;
+  const isAuthenticated = authToken !== null;
 
   return (
     <div className="recipe">
@@ -239,6 +242,17 @@ function Recipe() {
               />
             )}
           </div>
+          {isAuthenticated && !isUserOwner && (
+            <>
+              <SaveRecipe recipeId={id} userId={user} authToken={authToken} />
+              <UnsaveRecipe recipeId={id} userId={user} authToken={authToken} />
+            </>
+          )}
+          {!isAuthenticated && (
+            <div>
+              Please sign in to save this recipe.
+            </div>
+          )}
           {isUserOwner && (
             <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
           )}

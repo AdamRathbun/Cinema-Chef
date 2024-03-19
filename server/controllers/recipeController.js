@@ -212,6 +212,79 @@ const deleteRecipe = async (req, res) => {
   }
 };
 
+// const saveRecipe = async (req, res) => {
+//   const userId = req.user.id;
+//   const { recipeId } = req.body;
+
+//   try {
+//     await pool.query('INSERT INTO saved_recipes (user_id, recipe_id) VALUES ($1, $2)', [userId, recipeId]);
+//     res.status(201).send('Recipe saved successfully');
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Error saving recipe');
+//   }
+// };
+
+const saveRecipe = async (req, res) => {
+  const userId = req.user.id;
+  const { recipeId } = req.body;
+
+  try {
+    const existingSavedRecipe = await pool.query(
+      'SELECT * FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2',
+      [userId, recipeId]
+    );
+
+    if (existingSavedRecipe.rows.length > 0) {
+      return res.status(400).send('Recipe already saved by the user');
+    }
+
+    await pool.query('INSERT INTO saved_recipes (user_id, recipe_id) VALUES ($1, $2)', [userId, recipeId]);
+    res.status(201).send('Recipe saved successfully');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error saving recipe');
+  }
+};
+
+
+const unsaveRecipe = async (req, res) => {
+  const userId = req.user.id;
+  const { recipeId } = req.body;
+
+  try {
+    await pool.query('DELETE FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2', [userId, recipeId]);
+    res.status(200).send('Recipe unsaved successfully');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error unsaving recipe');
+  }
+};
+
+const getSavedRecipes = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const query = {
+      text: `
+        SELECT recipes.*
+        FROM recipes
+        JOIN saved_recipes ON recipes.recipe_id = saved_recipes.recipe_id
+        WHERE saved_recipes.user_id = $1
+      `,
+      values: [userId],
+    };
+    const result = await pool.query(query);
+    const savedRecipes = result.rows;
+
+    console.log(savedRecipes)
+    res.json(savedRecipes);
+  } catch (error) {
+    console.error('Error fetching saved recipes:', error);
+    res.status(500).json({ error: 'An error occurred while fetching saved recipes' });
+  }
+};
+
 module.exports = {
   getAllRecipes,
   getRecipeById,
@@ -225,5 +298,8 @@ module.exports = {
   searchByDietaryRestriction,
   searchByMovieGenre,
   searchRecipes,
+  saveRecipe,
+  unsaveRecipe,
+  getSavedRecipes,
 };
 

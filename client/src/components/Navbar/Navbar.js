@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import AuthComponent from '../Auth/Auth';
 import SearchBar from '../SearchBar/SearchBar';
 
-function Navbar() {
+function Navbar({ userId }) {
+
   return (
     <nav className='navbar'>
       <ul className='navbar-nav'>
@@ -17,6 +18,11 @@ function Navbar() {
         <li className='navbar-item'>
           <Link to="/add-recipe">Add a recipe</Link>
         </li>
+        {userId && (
+          <li className='navbar-item'>
+            <Link to={`/saved-recipes`}>Saved recipes</Link>
+          </li>
+        )}
         <li>
           <AuthComponent />
         </li>
