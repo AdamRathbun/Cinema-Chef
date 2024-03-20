@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'
 
 function UnsaveRecipe({ recipeId, userId, authToken }) {
   const [isUnsaving, setIsUnsaving] = useState(false);
+  const navigate = useNavigate();
 
   const handleUnsave = async () => {
     try {
@@ -19,6 +21,7 @@ function UnsaveRecipe({ recipeId, userId, authToken }) {
       });
 
       console.log('Unsave recipe response:', response.data);
+      navigate('/')
     } catch (error) {
       console.error('Error unsaving recipe:', error);
     } finally {

@@ -14,6 +14,8 @@ function Recipe() {
   const [movieInfo, setMovieInfo] = useState(null);
   const [showMovieInfo, setShowMovieInfo] = useState(false);
   const [user, setUser] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+
   const navigate = useNavigate();
   const { id } = useParams();
   const authToken = localStorage.getItem('authToken');
@@ -59,6 +61,29 @@ function Recipe() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const checkSavedRecipe = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/check-saved-recipe?user_id=${user}&recipe_id=${id}`, {
+          user_id: user,
+          recipe_id: id,
+        }, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        setIsSaved(response.data.saved);
+      } catch (error) {
+        console.error('Error checking saved recipe:', error);
+      }
+    };
+
+    if (user) {
+      checkSavedRecipe();
+    }
+  }, [user, id, authToken]);
 
   const handleDelete = async () => {
     try {
@@ -244,10 +269,14 @@ function Recipe() {
           </div>
           {isAuthenticated && !isUserOwner && (
             <>
-              <SaveRecipe recipeId={id} userId={user} authToken={authToken} />
-              <UnsaveRecipe recipeId={id} userId={user} authToken={authToken} />
+              {isSaved ? (
+                <UnsaveRecipe recipeId={id} userId={user} authToken={authToken} />
+              ) : (
+                <SaveRecipe recipeId={id} userId={user} authToken={authToken} />
+              )}
             </>
           )}
+
           {!isAuthenticated && (
             <div>
               Please sign in to save this recipe.

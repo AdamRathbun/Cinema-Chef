@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'
 
 function AddRecipe() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ function AddRecipe() {
     dietary_restriction: 'none',
     movie_genre: '',
   });
+
+  const navigate = useNavigate();
 
   const [message, setMessage] = useState(null);
   const authToken = localStorage.getItem('authToken');
@@ -73,6 +76,7 @@ function AddRecipe() {
       }
 
       setMessage('Recipe added!');
+      navigate('/')
     } catch (error) {
       console.error('Error uploading data:', error);
       setMessage('Error adding the recipe—try again.');

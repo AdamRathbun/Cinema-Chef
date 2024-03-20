@@ -3,6 +3,7 @@ import axios from 'axios';
 
 function SaveRecipe({ recipeId, userId, authToken }) {
   const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleSave = async () => {
     if (isSaving) {
@@ -25,6 +26,7 @@ function SaveRecipe({ recipeId, userId, authToken }) {
       );
 
       console.log('Recipe saved:', response.data);
+      setMessage('Recipe saved!')
     } catch (error) {
       console.error('Error saving recipe:', error);
     } finally {
@@ -37,6 +39,7 @@ function SaveRecipe({ recipeId, userId, authToken }) {
       <button onClick={handleSave} disabled={isSaving}>
         {isSaving ? 'Saving...' : 'Save Recipe'}
       </button>
+      {message && <p>{message}</p>}
     </div>
   );
 }

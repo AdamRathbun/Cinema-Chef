@@ -212,19 +212,6 @@ const deleteRecipe = async (req, res) => {
   }
 };
 
-// const saveRecipe = async (req, res) => {
-//   const userId = req.user.id;
-//   const { recipeId } = req.body;
-
-//   try {
-//     await pool.query('INSERT INTO saved_recipes (user_id, recipe_id) VALUES ($1, $2)', [userId, recipeId]);
-//     res.status(201).send('Recipe saved successfully');
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error saving recipe');
-//   }
-// };
-
 const saveRecipe = async (req, res) => {
   const userId = req.user.id;
   const { recipeId } = req.body;
@@ -285,6 +272,22 @@ const getSavedRecipes = async (req, res) => {
   }
 };
 
+const checkSavedRecipe = async (req, res) => {
+  const { user_id, recipe_id } = req.query;
+
+  try {
+    const savedRecipe = await pool.query(
+      'SELECT * FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2',
+      [user_id, recipe_id]
+    );
+
+    res.status(200).json({ saved: savedRecipe.rows.length > 0 });
+  } catch (error) {
+    console.error('Error checking saved recipe:', error);
+    res.status(500).json({ error: 'Error checking saved recipe' });
+  }
+};
+
 module.exports = {
   getAllRecipes,
   getRecipeById,
@@ -301,5 +304,7 @@ module.exports = {
   saveRecipe,
   unsaveRecipe,
   getSavedRecipes,
+  checkSavedRecipe,
+
 };
 

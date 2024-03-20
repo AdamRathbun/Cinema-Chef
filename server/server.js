@@ -176,7 +176,6 @@ app.post('/recipes-with-image', authenticateToken, upload.single('image'), async
   const userId = req.user.id;
 
   try {
-    console.log('User ID before SQL query:', userId);
     const result = await pool.query(
       'INSERT INTO recipes (title, ingredients, instructions, movie_title, image, user_id, meal_type, dietary_restriction, movie_genre) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
       [title, ingredients, instructions, movie_title, imageUrl, userId, meal_type, dietary_restriction, movie_genre]
@@ -197,7 +196,6 @@ app.post('/recipes-without-image', authenticateToken, upload.none(), async (req,
   const userId = req.user.id;
 
   try {
-    console.log('User ID before SQL query:', userId);
     const result = await pool.query(
       'INSERT INTO recipes (title, ingredients, instructions, movie_title, user_id, meal_type, dietary_restriction, movie_genre) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
       [title, ingredients, instructions, movie_title, userId, meal_type, dietary_restriction, movie_genre]
@@ -212,23 +210,6 @@ app.post('/recipes-without-image', authenticateToken, upload.none(), async (req,
   }
 });
 
-// 3.19
-// app.post('/save-recipe', async (req, res) => {
-//   const { user_id, recipe_id } = req.body;
-
-//   try {
-//     const result = await pool.query(
-//       'INSERT INTO saved_recipes (user_id, recipe_id) VALUES ($1, $2) RETURNING *',
-//       [user_id, recipe_id]
-//     );
-
-//     const savedRecipe = result.rows[0];
-//     res.status(201).json(savedRecipe);
-//   } catch (error) {
-//     console.error('Error saving recipe:', error);
-//     res.status(500).json({ error: 'Error saving recipe' });
-//   }
-// });
 app.post('/save-recipe', async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
@@ -296,6 +277,22 @@ app.get('/saved-recipes', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error fetching saved recipes:', error);
     res.status(500).json({ error: 'An error occurred while fetching saved recipes' });
+  }
+});
+
+app.get('/check-saved-recipe', async (req, res) => {
+  const { user_id, recipe_id } = req.query;
+
+  try {
+    const savedRecipe = await pool.query(
+      'SELECT * FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2',
+      [user_id, recipe_id]
+    );
+
+    res.status(200).json({ saved: savedRecipe.rows.length > 0 });
+  } catch (error) {
+    console.error('Error checking saved recipe:', error);
+    res.status(500).json({ error: 'Error checking saved recipe' });
   }
 });
 

@@ -15,9 +15,9 @@ router.post('/upload-image', authenticateToken, recipeController.uploadImage);
 router.put('/recipes/:id', authenticateToken, recipeController.updateRecipe);
 router.delete('/recipes/:id', authenticateToken, recipeController.deleteRecipe);
 
-router.post('/save', authMiddleware.authenticateToken, recipeController.saveRecipe);
-router.delete('/unsave', authMiddleware.authenticateToken, recipeController.unsaveRecipe);
-
+router.post('/save', authenticateToken, recipeController.saveRecipe);
+router.delete('/unsave', authenticateToken, recipeController.unsaveRecipe);
 router.get('/saved-recipes', authenticateToken, recipeController.getSavedRecipes);
+router.get('/check-saved-recipe', authenticateToken, recipeController.checkSavedRecipe);
 
 module.exports = router;
