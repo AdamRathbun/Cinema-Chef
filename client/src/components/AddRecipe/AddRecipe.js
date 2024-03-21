@@ -51,6 +51,7 @@ function AddRecipe() {
       if (formData.image) {
         form.append('image', formData.image);
 
+        // *need to update later with hosting
         const uploadResponse = await axios.post('http://localhost:5000/upload-image', form, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -60,6 +61,7 @@ function AddRecipe() {
 
         const imageUrl = uploadResponse.data.imageUrl;
 
+        // *need to update later with hosting
         await axios.post('http://localhost:5000/recipes-with-image', { ...formData, imageUrl }, {
           headers: {
             'Content-Type': 'application/json',
@@ -67,6 +69,7 @@ function AddRecipe() {
           },
         });
       } else {
+        // *need to update later with hosting
         await axios.post('http://localhost:5000/recipes-without-image', form, {
           headers: {
             'Content-Type': 'multipart/form-data',

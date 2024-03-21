@@ -5,6 +5,8 @@ import DeleteRecipe from '../DeleteRecipe/DeleteRecipe';
 import UpdateRecipe from '../UpdateRecipe/UpdateRecipe';
 import SaveRecipe from '../SaveRecipe/SaveRecipe';
 import UnsaveRecipe from '../SaveRecipe/UnsaveRecipe';
+import LikeRecipe from '../LikeRecipe/LikeRecipe';
+import DislikeRecipe from '../LikeRecipe/DislikeRecipe';
 import { jwtDecode } from 'jwt-decode';
 
 function Recipe() {
@@ -23,12 +25,14 @@ function Recipe() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // *need to update later with hosting
         const response = await axios.get(`http://localhost:5000/recipes/${id}`);
-        console.log('Recipe data:', response.data);
+
         setRecipe(response.data);
 
         const movieTitle = response.data.movie_title;
         if (movieTitle) {
+          // *need to update later with hosting
           const movieResponse = await axios.get(`http://localhost:5000/api/movies/search?name=${movieTitle}`);
           const movieData = movieResponse.data[0];
 
@@ -65,6 +69,7 @@ function Recipe() {
   useEffect(() => {
     const checkSavedRecipe = async () => {
       try {
+        // *need to update later with hosting
         const response = await axios.get(`http://localhost:5000/check-saved-recipe?user_id=${user}&recipe_id=${id}`, {
           user_id: user,
           recipe_id: id,
@@ -92,6 +97,7 @@ function Recipe() {
         return;
       }
 
+      // *need to update later with hosting
       const response = await axios.delete(`http://localhost:5000/recipes/${id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -114,7 +120,6 @@ function Recipe() {
   };
 
   const handleUpdate = async (field, updatedValue) => {
-    console.log('handleUpdate called');
 
     if (isUpdating) {
       console.log('Update already in progress. Ignoring.');
@@ -139,19 +144,27 @@ function Recipe() {
         value: updatedValue,
       };
 
+      // *need to update later with hosting
       const response = await axios.put(`http://localhost:5000/recipes/${id}`, updateData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
 
-      console.log(`Recipe ${field} updated:`, response.data);
-
       setRecipe(response.data);
     } catch (error) {
       console.error(`Error updating ${field}:`, error.response?.data || error.message);
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleRecipeUpdate = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/recipes/${id}`);
+      setRecipe(response.data);
+    } catch (error) {
+      console.error('Error fetching updated recipe data:', error);
     }
   };
 
@@ -276,7 +289,6 @@ function Recipe() {
               )}
             </>
           )}
-
           {!isAuthenticated && (
             <div>
               Please sign in to save this recipe.
@@ -285,6 +297,22 @@ function Recipe() {
           {isUserOwner && (
             <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
           )}
+          <div className="recipe_likes_and_dislikes">
+            <div className="likes_container">
+              <strong>Likes:</strong>
+              {recipe.likes}
+              {isAuthenticated && !isUserOwner && (
+                <LikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
+              )}
+            </div>
+            <div className="dislikes_container">
+              <strong>Dislikes:</strong>
+              {recipe.dislikes}
+              {isAuthenticated && !isUserOwner && (
+                <DislikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
+              )}
+            </div>
+          </div>
           {showMovieInfo && movieInfo && (
             <>
               <h4>More about this movie:</h4>

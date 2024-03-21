@@ -20,4 +20,11 @@ router.delete('/unsave', authenticateToken, recipeController.unsaveRecipe);
 router.get('/saved-recipes', authenticateToken, recipeController.getSavedRecipes);
 router.get('/check-saved-recipe', authenticateToken, recipeController.checkSavedRecipe);
 
+router.post('/like-recipe', authenticateToken, recipeController.likeRecipe);
+router.post('/dislike-recipe', authenticateToken, recipeController.dislikeRecipe);
+router.post('/delete-like', authenticateToken, recipeController.deleteLike);
+router.post('/delete-dislike', authenticateToken, recipeController.deleteDislike);
+router.get('/check-liked-recipe', authenticateToken, recipeController.checkLikedRecipe);
+router.get('/check-disliked-recipe', authenticateToken, recipeController.checkDislikedRecipe);
+
 module.exports = router;

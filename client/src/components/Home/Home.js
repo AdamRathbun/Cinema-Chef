@@ -12,9 +12,9 @@ function Home() {
   const movieGenres = ['action', 'comedy', 'drama', 'thriller', 'horror', 'sci-fi', 'fantasy', 'romance', 'animated', 'documentary'];
 
   useEffect(() => {
+    // *need to update later with hosting
     axios.get('http://localhost:5000/top-liked-recipes')
       .then((response) => {
-        console.log('Response data:', response.data);
         setLikedRecipes(response.data);
       })
       .catch((error) => {

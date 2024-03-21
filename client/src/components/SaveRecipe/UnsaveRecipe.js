@@ -10,6 +10,7 @@ function UnsaveRecipe({ recipeId, userId, authToken }) {
     try {
       setIsUnsaving(true);
 
+      // *need to update later with hosting
       const response = await axios.delete(`http://localhost:5000/unsave-recipe`, {
         data: {
           user_id: userId,
@@ -20,7 +21,6 @@ function UnsaveRecipe({ recipeId, userId, authToken }) {
         },
       });
 
-      console.log('Unsave recipe response:', response.data);
       navigate('/')
     } catch (error) {
       console.error('Error unsaving recipe:', error);

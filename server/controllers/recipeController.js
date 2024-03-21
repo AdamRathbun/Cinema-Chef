@@ -288,6 +288,141 @@ const checkSavedRecipe = async (req, res) => {
   }
 };
 
+const likeRecipe = async (req, res) => {
+  const { user_id, recipe_id } = req.body;
+
+  try {
+    const existingLike = await pool.query(
+      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
+      [user_id, recipe_id, 'like']
+    );
+
+    if (existingLike.rows.length > 0) {
+      return res.status(400).json({ error: 'User has already liked this recipe' });
+    }
+
+    await pool.query(
+      'INSERT INTO recipe_likes (user_id, recipe_id, interaction_type) VALUES ($1, $2, $3)',
+      [user_id, recipe_id, 'like']
+    );
+
+    await pool.query(
+      'UPDATE recipes SET likes = likes + 1 WHERE recipe_id = $1',
+      [recipe_id]
+    );
+
+    res.status(200).json({ message: 'Recipe liked successfully' });
+  } catch (error) {
+    console.error('Error liking recipe:', error);
+    res.status(500).json({ error: 'Error liking recipe' });
+  }
+};
+
+const dislikeRecipe = async (req, res) => {
+  const { user_id, recipe_id } = req.body;
+
+  try {
+    const existingDislike = await pool.query(
+      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
+      [user_id, recipe_id, 'dislike']
+    );
+
+    if (existingDislike.rows.length > 0) {
+      return res.status(400).json({ error: 'User has already disliked this recipe' });
+    }
+
+    await pool.query(
+      'INSERT INTO recipe_likes (user_id, recipe_id, interaction_type) VALUES ($1, $2, $3)',
+      [user_id, recipe_id, 'dislike']
+    );
+
+    await pool.query(
+      'UPDATE recipes SET dislikes = dislikes + 1 WHERE recipe_id = $1',
+      [recipe_id]
+    );
+
+    res.status(200).json({ message: 'Recipe disliked successfully' });
+  } catch (error) {
+    console.error('Error disliking recipe:', error);
+    res.status(500).json({ error: 'Error disliking recipe' });
+  }
+};
+
+const deleteLike = async (req, res) => {
+  const { user_id, recipe_id } = req.body;
+
+  try {
+    await pool.query(
+      'DELETE FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
+      [user_id, recipe_id, 'like']
+    );
+
+    await pool.query(
+      'UPDATE recipes SET likes = CASE WHEN likes > 0 THEN likes - 1 ELSE 0 END WHERE recipe_id = $1',
+      [recipe_id]
+    );
+
+    res.status(200).json({ message: 'Like deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting like:', error);
+    res.status(500).json({ error: 'Error deleting like' });
+  }
+};
+
+const deleteDislike = async (req, res) => {
+  const { user_id, recipe_id } = req.body;
+
+  try {
+    await pool.query(
+      'DELETE FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
+      [user_id, recipe_id, 'dislike']
+    );
+
+    await pool.query(
+      // 'UPDATE recipes SET dislikes = CASE WHEN dislikes > 0 THEN dislikes - 1 ELSE 0 END WHERE recipe_id = $1',
+      'UPDATE recipes SET dislikes = dislikes - 1 WHERE recipe_id = $1',
+      [recipe_id]
+    );
+
+    res.status(200).json({ message: 'Dislike deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting dislike:', error);
+    res.status(500).json({ error: 'Error deleting dislike' });
+  }
+};
+
+const checkLikedRecipe = async (req, res) => {
+  const { user_id, recipe_id } = req.query;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
+      [user_id, recipe_id, 'like']
+    );
+
+    res.status(200).json({ liked: result.rows.length > 0 });
+  } catch (error) {
+    console.error('Error checking liked recipe:', error);
+    res.status(500).json({ error: 'Error checking liked recipe' });
+  }
+};
+
+const checkDislikedRecipe = async (req, res) => {
+  const { user_id, recipe_id } = req.query;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
+      [user_id, recipe_id, 'dislike']
+    );
+
+    res.status(200).json({ disliked: result.rows.length > 0 });
+  } catch (error) {
+    console.error('Error checking disliked recipe:', error);
+    res.status(500).json({ error: 'Error checking disliked recipe' });
+  }
+};
+
 module.exports = {
   getAllRecipes,
   getRecipeById,
@@ -305,6 +440,11 @@ module.exports = {
   unsaveRecipe,
   getSavedRecipes,
   checkSavedRecipe,
-
+  likeRecipe,
+  dislikeRecipe,
+  deleteLike,
+  deleteDislike,
+  checkLikedRecipe,
+  checkDislikedRecipe,
 };
 
