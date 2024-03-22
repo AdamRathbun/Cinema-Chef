@@ -7,11 +7,11 @@ import SaveRecipe from '../SaveRecipe/SaveRecipe';
 import UnsaveRecipe from '../SaveRecipe/UnsaveRecipe';
 import LikeRecipe from '../LikeRecipe/LikeRecipe';
 import DislikeRecipe from '../LikeRecipe/DislikeRecipe';
+import { FacebookShareButton, TwitterShareButton, PinterestShareButton } from 'react-share';
 import { jwtDecode } from 'jwt-decode';
 
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [movieInfo, setMovieInfo] = useState(null);
   const [showMovieInfo, setShowMovieInfo] = useState(false);
@@ -21,6 +21,7 @@ function Recipe() {
   const navigate = useNavigate();
   const { id } = useParams();
   const authToken = localStorage.getItem('authToken');
+  const recipeUrl = `http://localhost:5000/recipes/${id}`;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,11 +43,8 @@ function Recipe() {
             setMovieInfo(null);
           }
         }
-
-        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching recipe or movie information:', error);
-        setIsLoading(false);
       }
     };
 
@@ -323,6 +321,19 @@ function Recipe() {
         </>
       )}
       {!recipe && <div>Recipe not found</div>}
+      {recipe && (
+        <>
+          <FacebookShareButton url={recipeUrl} quote={recipe.title}>
+            Share on Facebook
+          </FacebookShareButton>
+          <TwitterShareButton url={recipeUrl} title={recipe.title}>
+            Share on Twitter/X
+          </TwitterShareButton>
+          <PinterestShareButton url={recipeUrl} description={recipe.title}>
+            Share on Pinterest
+          </PinterestShareButton>
+        </>
+      )}
     </div>
   );
 }
