@@ -1,0 +1,45 @@
+// X-Small devices (portrait phones, less than 576px)
+@mixin phone {
+  @media (max-width: rem(575.98)) {
+    @content;
+  }
+}
+
+// Small devices (landscape phones, less than 768px)
+@mixin phone-landscape {
+  @media (max-width: rem(767.98)) {
+    @content;
+  }
+}
+
+// Medium devices (tablets, less than 992px)
+@mixin tablet {
+  @media (max-width: rem(991.98)) {
+    @content;
+  }
+}
+
+// Large devices (desktops, less than 1200px)
+@mixin desktop {
+  @media (max-width: rem(1199.98)) {
+    @content;
+  }
+}
+
+// X-Large devices (large desktops, less than 1400px)
+@mixin desktop-large {
+  @media (max-width: rem(1399.98)) {
+    @content;
+  }
+}
+
+// all desktop devices
+@mixin desktop-all {
+  @media (min-width: rem(1199.98)) {
+    @content;
+  }
+}
+
+@function rem($value) {
+  @return ($value / 16)+rem;
+}

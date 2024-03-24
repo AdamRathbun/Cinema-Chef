@@ -1,0 +1,42 @@
+@import '../mixins.scss';
+
+.navbar {
+  background-color: #333;
+  padding: 10px, 0;
+
+  .navbar__list {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    // max-width: 1200px;
+  }
+
+  .navbar__item {
+    margin-right: 10px;
+
+    @include phone {
+      margin-bottom: 10px;
+    }
+  }
+
+  .navbar__link {
+    color: #fff;
+    text-decoration: none;
+
+    &:hover {
+      color: #ccc;
+    }
+  }
+
+  .navbar--right {
+    display: flex;
+    align-items: center;
+
+    @include phone {
+      flex-direction: column;
+      margin-top: 10px
+    }
+  }
+}
