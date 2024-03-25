@@ -8,6 +8,9 @@ function Navbar({ userId }) {
 
   return (
     <nav className='navbar'>
+      <h2 className='logo'>
+        <Link to="/" className='navbar__link'>CinemaChef</Link>
+      </h2>
       <ul className='navbar__list'>
         <li className='navbar__item'>
           <Link to="/" className='navbar__link'>Home</Link>
@@ -23,11 +26,13 @@ function Navbar({ userId }) {
             <Link to={`/saved-recipes`} className='navbar__link'>Saved recipes</Link>
           </li>
         )}
-        <div className='navbar--right'>
-          <AuthComponent />
+        <li>
           <SearchBar />
-        </div>
+        </li>
       </ul>
+      <div className='navbar--right'>
+        <AuthComponent />
+      </div>
     </nav>
   );
 }
