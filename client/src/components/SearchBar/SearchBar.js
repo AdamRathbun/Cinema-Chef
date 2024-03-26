@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './SearchBar.scss'
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -31,10 +32,10 @@ const SearchBar = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSearch}>
-        <input type="text" value={query} onChange={handleChange} placeholder="Search for recipes" />
-        <button type="submit">Search</button>
+    <div className="search-container">
+      <form className="search-form" onSubmit={handleSearch}>
+        <input className="search-input" type="text" value={query} onChange={handleChange} placeholder="Search for recipes" />
+        <button className="search-button" type="submit">Search</button>
       </form>
     </div>
   );

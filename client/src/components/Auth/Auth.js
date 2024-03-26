@@ -70,98 +70,31 @@ const AuthComponent = () => {
     setIsRegisterFormVisible(!isRegisterFormVisible);
   };
 
-  //   return (
-  //     <div className="auth-container">
-  //       {user ? (
-  //         <div>
-  //           <p>Welcome, {user.username}!</p>
-  //           <button onClick={handleLogout}>Logout</button>
-  //         </div>
-  //       ) : (
-  //         <div className="auth-content">
-  //           {isLoginFormVisible && (
-  //             <div className="auth-form">
-  //               <label>
-  //                 Username:
-  //                 <input
-  //                   type="text"
-  //                   value={formData.username}
-  //                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-  //                 />
-  //               </label>
-  //               <label>
-  //                 Password:
-  //                 <input
-  //                   type="password"
-  //                   value={formData.password}
-  //                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-  //                 />
-  //               </label>
-  //               <button className="auth-message" onClick={handleAuth}>Login</button>
-  //               <div className="auth-message" onClick={toggleRegisterFormVisibility}>Need to register?</div>
-  //             </div>
-  //           )}
-  //           {isRegisterFormVisible && (
-  //             <div className="auth-form">
-  //               <label>
-  //                 Username:
-  //                 <input
-  //                   type="text"
-  //                   value={formData.username}
-  //                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-  //                 />
-  //               </label>
-  //               <label>
-  //                 Password:
-  //                 <input
-  //                   type="password"
-  //                   value={formData.password}
-  //                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-  //                 />
-  //               </label>
-  //               <button className="auth-message" onClick={handleAuth}>Register</button>
-  //               <div className="auth-message" onClick={toggleLoginFormVisibility}>Want to login?</div>
-  //             </div>
-  //           )}
-  //           {!isLoginFormVisible && !isRegisterFormVisible && (
-  //             <div className="auth-options">
-  //               <div className="auth-message" onClick={toggleLoginFormVisibility}>Login</div>
-  //             </div>
-  //           )}
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
-
-  // export default AuthComponent;
-
-
   return (
     <div className="auth-container">
       {user ? (
         <div>
           <p>Welcome, {user.username}!</p>
-          <button onClick={handleLogout}>Logout</button>
+          <button className='auth-button' onClick={handleLogout}>Logout</button>
         </div>
       ) : (
         <div className="auth-content">
           {isLoginFormVisible && (
             <div className="auth-form">
               <label>
-                Username:
                 <input
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  placeholder='Username'
                 />
               </label>
               <label>
-                Password:
                 <input
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder='Password'
                 />
               </label>
               <div className="auth-buttons">
@@ -173,19 +106,19 @@ const AuthComponent = () => {
           {isRegisterFormVisible && (
             <div className="auth-form">
               <label>
-                Username:
                 <input
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  placeholder='Username'
                 />
               </label>
               <label>
-                Password:
                 <input
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder='Password'
                 />
               </label>
               <div className="auth-buttons">
