@@ -155,47 +155,27 @@ const uploadImage = async (req, res) => {
 
 const updateRecipe = async (req, res) => {
   const { id } = req.params;
-  const { title, ingredients, instructions, movie_title } = req.body;
+  const { field, value } = req.body;
 
   try {
-    let updateQuery = 'UPDATE recipes SET';
-    const queryParams = [];
+    let updateQuery = `UPDATE recipes SET ${field} = $1 WHERE recipe_id = $2 RETURNING *`;
+    const queryParams = [value, id];
 
-    if (title) {
-      updateQuery += ' title = $1,';
-      queryParams.push(title);
+    if (field === 'image' && req.file) {
+      const newImageFilename = req.file.filename;
+      // *update later with image hosting url
+      const newImageUrl = `http://localhost:5000/upload-image/${newImageFilename}`;
+
+      updateQuery = `UPDATE recipes SET image = $1 WHERE recipe_id = $2 RETURNING *`;
+      queryParams[0] = newImageUrl;
     }
 
-    if (ingredients) {
-      updateQuery += ' ingredients = $2,';
-      queryParams.push(ingredients);
-    }
+    const updateResult = await pool.query(updateQuery, queryParams);
+    const updatedRecipe = updateResult.rows[0];
 
-    if (instructions) {
-      updateQuery += ' instructions = $3,';
-      queryParams.push(instructions);
-    }
-
-    if (movie_title) {
-      updateQuery += ' movie_title = $4,';
-      queryParams.push(movie_title);
-    }
-
-    if (req.body.field === 'image' && req.body.image) {
-      updateQuery += ' image = $5';
-      queryParams.push(req.body.image);
-    }
-
-    updateQuery = updateQuery.replace(/,$/, '');
-
-    updateQuery += ' WHERE recipe_id = $6 RETURNING *';
-    queryParams.push(id);
-
-    const result = await pool.query(updateQuery, queryParams);
-    const updatedRecipe = result.rows[0];
     res.json(updatedRecipe);
   } catch (err) {
-    console.error(err);
+    console.error('Error updating the recipe:', err);
     res.status(500).send('Error updating the recipe');
   }
 };

@@ -193,6 +193,18 @@ function Recipe() {
             {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
           </button>
           <div className="recipe_movie_title">
+            <strong>Description:</strong> {recipe.description}
+            {isUserOwner && (
+              <UpdateRecipe
+                field="description"
+                initialValue={recipe.description}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          <div className="recipe_movie_title">
             <strong>Movie Title:</strong> {recipe.movie_title}
             {isUserOwner && (
               <UpdateRecipe
