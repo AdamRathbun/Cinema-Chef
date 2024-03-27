@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 10px;
 }
 
 .search-form {
@@ -26,7 +27,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color .2s ease;
+  transition: background-color .1s ease;
 }
 
 .search-button:hover {

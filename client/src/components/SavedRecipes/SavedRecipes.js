@@ -29,21 +29,25 @@ function SavedRecipes() {
   return (
     <div>
       <h2>Saved Recipes</h2>
-      <ul>
-        {savedRecipes.map((savedRecipe) => (
-          <li key={savedRecipe.recipe_id}>
-            <Link to={`/recipes/${savedRecipe.recipe_id}`}>
-              <p>Title: {savedRecipe.title}</p>
-              <p>Movie Title: {savedRecipe.movie_title}</p>
-              <p>Meal Type: {savedRecipe.meal_type}</p>
-              {savedRecipe.dietary_restriction !== 'none' && (
-                <p>Dietary Restriction: {savedRecipe.dietary_restriction}</p>
-              )}
-              <p>Likes: {savedRecipe.likes}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {authToken ? (
+        <ul>
+          {savedRecipes.map((savedRecipe) => (
+            <li key={savedRecipe.recipe_id}>
+              <Link to={`/recipes/${savedRecipe.recipe_id}`}>
+                <p>Title: {savedRecipe.title}</p>
+                <p>Movie Title: {savedRecipe.movie_title}</p>
+                <p>Meal Type: {savedRecipe.meal_type}</p>
+                {savedRecipe.dietary_restriction !== 'none' && (
+                  <p>Dietary Restriction: {savedRecipe.dietary_restriction}</p>
+                )}
+                <p>Likes: {savedRecipe.likes}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Please log in to view your saved recipes.</p>
+      )}
     </div>
   );
 }

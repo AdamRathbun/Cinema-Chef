@@ -82,7 +82,7 @@ function AddRecipe() {
       navigate('/')
     } catch (error) {
       console.error('Error uploading data:', error);
-      setMessage('Error adding the recipe—try again.');
+      setMessage('Sign in to create your new recipe!');
     }
   };
 

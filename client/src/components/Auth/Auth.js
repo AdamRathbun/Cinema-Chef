@@ -73,7 +73,7 @@ const AuthComponent = () => {
   return (
     <div className="auth-container">
       {user ? (
-        <div>
+        <div className='auth__welcome-message'>
           <p>Welcome, {user.username}!</p>
           <button className='auth-button' onClick={handleLogout}>Logout</button>
         </div>
@@ -99,7 +99,7 @@ const AuthComponent = () => {
               </label>
               <div className="auth-buttons">
                 <button className="auth-button" onClick={handleAuth}>Login</button>
-                <div className="auth-message" onClick={toggleRegisterFormVisibility}>Need to register?</div>
+                <div className="auth-message" onClick={toggleRegisterFormVisibility}>Register</div>
               </div>
             </div>
           )}
@@ -123,7 +123,7 @@ const AuthComponent = () => {
               </label>
               <div className="auth-buttons">
                 <button className="auth-button" onClick={handleAuth}>Register</button>
-                <div className="auth-message" onClick={toggleRegisterFormVisibility}>Login to account.</div>
+                <div className="auth-message" onClick={toggleRegisterFormVisibility}>Back</div>
               </div>
             </div>
           )}

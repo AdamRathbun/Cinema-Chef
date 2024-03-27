@@ -1,7 +1,6 @@
 @import '../mixins.scss';
 
 .navbar {
-  // background-color: #333;
   padding: 10px, 0;
   display: flex;
   align-items: center;
@@ -9,15 +8,63 @@
   border-bottom: 3px solid #ccc;
   padding-left: 90px;
   padding-right: 90px;
+  position: relative;
 
   @include tablet {
     padding-left: 30px;
     padding-right: 30px;
+    border-bottom: 0;
+  }
+
+  @include phone {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .menu-toggle {
+    display: block;
+    cursor: pointer;
+    padding-right: 30px;
+    padding-left: 30px;
+
+    @include desktop {
+      display: none;
+    }
+
+    img {
+      width: 30px;
+      height: auto;
+    }
+
+    @include phone {
+      padding-left: 10px;
+    }
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    list-style-type: none;
+    top: 0;
+    left: 0;
+    margin-top: 70px;
+    background-color: #fff;
+    border: 2px solid #FF8C00;
+    padding: 10px;
+    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
   }
 
   .logo {
+    padding-right: 14px;
     @include logo-font;
     font-style: italic;
+
+    @include phone {
+      padding-right: 24px;
+    }
+  }
+
+  .closed {
+    display: none;
   }
 
   .navbar__list {
@@ -28,10 +75,16 @@
     width: 100%;
     max-width: 500px;
     padding-right: 50px;
+
+    @include tablet {
+      display: none;
+      padding-right: 0;
+    }
   }
 
   .navbar__item {
-    margin-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 
     @include phone {
       margin-bottom: 10px;
@@ -40,6 +93,10 @@
     &.active {
       font-weight: bold;
       border-bottom: 2px solid #FFA500;
+
+      @include tablet {
+        border-bottom: 0;
+      }
     }
   }
 
@@ -63,6 +120,7 @@
 
       @include tablet {
         padding-left: 30px;
+        display: none;
       }
 
       @include phone {
