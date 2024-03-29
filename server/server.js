@@ -171,14 +171,14 @@ app.post('/upload-image', authenticateToken, upload.single('image'), async (req,
 });
 
 app.post('/recipes-with-image', authenticateToken, upload.single('image'), async (req, res) => {
-  const { title, ingredients, instructions, movie_title, imageUrl, meal_type, dietary_restriction, movie_genre, description } = req.body;
+  const { title, ingredients, instructions, movie_title, imageUrl, meal_type, dietary_restriction, movie_genre, description, prep_time } = req.body;
 
   const userId = req.user.id;
 
   try {
     const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image, user_id, meal_type, dietary_restriction, movie_genre, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
-      [title, ingredients, instructions, movie_title, imageUrl, userId, meal_type, dietary_restriction, movie_genre, description]
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image, user_id, meal_type, dietary_restriction, movie_genre, description, prep_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+      [title, ingredients, instructions, movie_title, imageUrl, userId, meal_type, dietary_restriction, movie_genre, description, prep_time]
     );
 
     const newRecipe = result.rows[0];
@@ -191,14 +191,14 @@ app.post('/recipes-with-image', authenticateToken, upload.single('image'), async
 });
 
 app.post('/recipes-without-image', authenticateToken, upload.none(), async (req, res) => {
-  const { title, ingredients, instructions, movie_title, meal_type, dietary_restriction, movie_genre, description } = req.body;
+  const { title, ingredients, instructions, movie_title, meal_type, dietary_restriction, movie_genre, description, prep_time } = req.body;
 
   const userId = req.user.id;
 
   try {
     const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title, user_id, meal_type, dietary_restriction, movie_genre, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-      [title, ingredients, instructions, movie_title, userId, meal_type, dietary_restriction, movie_genre, description]
+      'INSERT INTO recipes (title, ingredients, instructions, movie_title, user_id, meal_type, dietary_restriction, movie_genre, description, prep_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+      [title, ingredients, instructions, movie_title, userId, meal_type, dietary_restriction, movie_genre, description, prep_time]
     );
 
     const newRecipe = result.rows[0];
@@ -470,7 +470,8 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
       meal_type: 'meal_type',
       dietary_restriction: 'dietary_restriction',
       movie_genre: 'movie_genre',
-      description: 'description'
+      description: 'description',
+      prep_time: 'prep_time',
     };
 
     const { field, value } = req.body;

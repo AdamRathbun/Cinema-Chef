@@ -13,6 +13,7 @@ function AddRecipe() {
     dietary_restriction: 'none',
     movie_genre: '',
     description: '',
+    prep_time: '',
   });
 
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ function AddRecipe() {
       form.append('dietary_restriction', formData.dietary_restriction);
       form.append('movie_genre', formData.movie_genre);
       form.append('description', formData.description);
+      form.append('prep_time', formData.prep_time);
 
       if (formData.image) {
         form.append('image', formData.image);
@@ -100,6 +102,14 @@ function AddRecipe() {
             value={formData.title}
             onChange={handleChange}
             required
+          />
+        </div>
+        <div>
+          <label>Prep Time</label>
+          <input
+            name='prep_time'
+            value={formData.prep_time}
+            onChange={handleChange}
           />
         </div>
         <div>

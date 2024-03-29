@@ -9,6 +9,8 @@ import LikeRecipe from '../LikeRecipe/LikeRecipe';
 import DislikeRecipe from '../LikeRecipe/DislikeRecipe';
 import { FacebookShareButton, TwitterShareButton, PinterestShareButton } from 'react-share';
 import { jwtDecode } from 'jwt-decode';
+// import ReactHtmlParser from 'react-html-parser'
+import './Recipe.scss'
 
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
@@ -177,7 +179,7 @@ function Recipe() {
     <div className="recipe">
       {recipe && (
         <>
-          <h2 className="recipe_title">
+          <h2 className="title">
             {recipe.title}
             {isUserOwner && (
               <UpdateRecipe
@@ -192,7 +194,19 @@ function Recipe() {
           <button onClick={toggleMovieInfo}>
             {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
           </button>
-          <div className="recipe_movie_title">
+          <div className="prep-time">
+            <strong>Prep time:</strong> {recipe.prep_time}
+            {isUserOwner && (
+              <UpdateRecipe
+                field="prep_time"
+                initialValue={recipe.prep_time}
+                id={id}
+                onUpdate={handleUpdate}
+                authToken={authToken}
+              />
+            )}
+          </div>
+          <div className="description">
             <strong>Description:</strong> {recipe.description}
             {isUserOwner && (
               <UpdateRecipe
@@ -204,7 +218,7 @@ function Recipe() {
               />
             )}
           </div>
-          <div className="recipe_movie_title">
+          <div className="movie-title">
             <strong>Movie Title:</strong> {recipe.movie_title}
             {isUserOwner && (
               <UpdateRecipe
@@ -217,7 +231,7 @@ function Recipe() {
             )}
           </div>
           <div>
-            {recipe.image && <img className="recipe_image" src={recipe.image} alt={recipe.title} />}
+            {recipe.image && <img className="image" src={recipe.image} alt={recipe.title} />}
             {movieInfo && showMovieInfo && movieInfo.poster_path && (
               <img
                 className="recipe_movie_poster"
@@ -229,7 +243,7 @@ function Recipe() {
               <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
             )}
           </div>
-          <div className="recipe_ingredients">
+          <div className="ingredients">
             <strong>Ingredients:</strong> {recipe.ingredients}
             {isUserOwner && (
               <UpdateRecipe
@@ -241,7 +255,7 @@ function Recipe() {
               />
             )}
           </div>
-          <div className="recipe_instructions">
+          <div className="instructions">
             <strong>Instructions:</strong> {recipe.instructions}
             {isUserOwner && (
               <UpdateRecipe
@@ -253,7 +267,7 @@ function Recipe() {
               />
             )}
           </div>
-          <div className="recipe_meal_type">
+          <div className="meal-type">
             <strong>Meal Type:</strong> {recipe.meal_type}
             {isUserOwner && (
               <UpdateRecipe
@@ -265,7 +279,7 @@ function Recipe() {
               />
             )}
           </div>
-          <div className="recipe_dietary_restriction">
+          <div className="dietary-restriction">
             <strong>Dietary Restriction:</strong> {recipe.dietary_restriction}
             {isUserOwner && (
               <UpdateRecipe
@@ -277,7 +291,7 @@ function Recipe() {
               />
             )}
           </div>
-          <div className="recipe_movie_genre">
+          <div className="movie-genre">
             <strong>Movie Genre:</strong>{" "}
             {recipe.movie_genre === "sci_fi" ? "sci-fi" : recipe.movie_genre}
             {isUserOwner && (
@@ -307,15 +321,15 @@ function Recipe() {
           {isUserOwner && (
             <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
           )}
-          <div className="recipe_likes_and_dislikes">
-            <div className="likes_container">
+          <div className="likes-and-dislikes-container">
+            <div className="likes">
               <strong>Likes:</strong>
               {recipe.likes}
               {isAuthenticated && !isUserOwner && (
                 <LikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
               )}
             </div>
-            <div className="dislikes_container">
+            <div className="dislikes">
               <strong>Dislikes:</strong>
               {recipe.dislikes}
               {isAuthenticated && !isUserOwner && (
@@ -334,7 +348,7 @@ function Recipe() {
       )}
       {!recipe && <div>Recipe not found</div>}
       {recipe && (
-        <>
+        <div className='socials'>
           <FacebookShareButton url={recipeUrl} quote={recipe.title}>
             Share on Facebook
           </FacebookShareButton>
@@ -344,7 +358,7 @@ function Recipe() {
           <PinterestShareButton url={recipeUrl} description={recipe.title}>
             Share on Pinterest
           </PinterestShareButton>
-        </>
+        </div>
       )}
     </div>
   );
