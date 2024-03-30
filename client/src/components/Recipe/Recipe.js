@@ -191,20 +191,31 @@ function Recipe() {
               />
             )}
           </h2>
-          <button onClick={toggleMovieInfo}>
-            {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
-          </button>
-          <div className="prep-time">
-            <strong>Prep time:</strong> {recipe.prep_time}
-            {isUserOwner && (
-              <UpdateRecipe
-                field="prep_time"
-                initialValue={recipe.prep_time}
-                id={id}
-                onUpdate={handleUpdate}
-                authToken={authToken}
-              />
-            )}
+          <div className='top-container'>
+            <div className="movie-title">
+              <strong>Inspired by the movie:</strong> {recipe.movie_title}
+              {isUserOwner && (
+                <UpdateRecipe
+                  field="movie_title"
+                  initialValue={recipe.movie_title}
+                  id={id}
+                  onUpdate={handleUpdate}
+                  authToken={authToken}
+                />
+              )}
+            </div>
+            <div className="prep-time">
+              <strong>Prep time:</strong> {recipe.prep_time}
+              {isUserOwner && (
+                <UpdateRecipe
+                  field="prep_time"
+                  initialValue={recipe.prep_time}
+                  id={id}
+                  onUpdate={handleUpdate}
+                  authToken={authToken}
+                />
+              )}
+            </div>
           </div>
           <div className="description">
             <strong>Description:</strong> {recipe.description}
@@ -212,18 +223,6 @@ function Recipe() {
               <UpdateRecipe
                 field="description"
                 initialValue={recipe.description}
-                id={id}
-                onUpdate={handleUpdate}
-                authToken={authToken}
-              />
-            )}
-          </div>
-          <div className="movie-title">
-            <strong>Movie Title:</strong> {recipe.movie_title}
-            {isUserOwner && (
-              <UpdateRecipe
-                field="movie_title"
-                initialValue={recipe.movie_title}
                 id={id}
                 onUpdate={handleUpdate}
                 authToken={authToken}
@@ -304,6 +303,9 @@ function Recipe() {
               />
             )}
           </div>
+          <button onClick={toggleMovieInfo}>
+            {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
+          </button>
           {isAuthenticated && !isUserOwner && (
             <>
               {isSaved ? (

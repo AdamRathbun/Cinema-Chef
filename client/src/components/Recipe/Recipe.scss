@@ -45,6 +45,16 @@
   justify-content: space-between;
 }
 
+.top-container {
+  display: flex;
+  flex-direction: row;
+  padding: 6px 10px;
+
+  .prep-time {
+    margin-left: 10px;
+  }
+}
+
 .likes,
 .dislikes {
   margin-bottom: 20px;
