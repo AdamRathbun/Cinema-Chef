@@ -15,17 +15,14 @@
 
 .title,
 .description,
-.movie-title,
 .ingredients,
 .instructions,
-.meal-type,
-.dietary-restriction,
-.movie-genre,
 .socials {
-  margin-bottom: 20px;
-  max-width: 1100px;
+  width: 1100px;
+  margin-top: 30px;
   margin-left: auto;
   margin-right: auto;
+
   text-align: left;
 }
 
@@ -39,25 +36,47 @@
   white-space: pre-wrap;
 }
 
+.top-container,
+.movie-container,
+.meal-container,
+.movie-info-container {
+  display: flex;
+  flex-direction: row;
+  padding: 0 10px;
+  width: 1100px;
+  margin-top: 20px;
+
+  div {
+    padding-right: 30px;
+  }
+}
+
 .likes-and-dislikes-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-.top-container {
+.likes,
+.dislikes {
   display: flex;
   flex-direction: row;
-  padding: 6px 10px;
+  margin-bottom: 20px;
+  padding-right: 10px;
 
-  .prep-time {
+  button {
     margin-left: 10px;
   }
 }
 
-.likes,
-.dislikes {
-  margin-bottom: 20px;
-  padding-left: 10px;
-  padding-right: 10px;
+.button {
+  padding: 8px 16px;
+  background-color: #FFA500;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color .1s ease;
+  height: 30px;
+  width: auto;
 }

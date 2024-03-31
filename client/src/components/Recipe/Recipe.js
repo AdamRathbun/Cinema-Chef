@@ -192,17 +192,37 @@ function Recipe() {
             )}
           </h2>
           <div className='top-container'>
-            <div className="movie-title">
-              <strong>Inspired by the movie:</strong> {recipe.movie_title}
-              {isUserOwner && (
-                <UpdateRecipe
-                  field="movie_title"
-                  initialValue={recipe.movie_title}
-                  id={id}
-                  onUpdate={handleUpdate}
-                  authToken={authToken}
-                />
+            <div>
+              {!isAuthenticated && (
+                <div>
+                  Please sign in to save this recipe.
+                </div>
               )}
+              {isAuthenticated && !isUserOwner && (
+                <>
+                  {isSaved ? (
+                    <UnsaveRecipe recipeId={id} userId={user} authToken={authToken} />
+                  ) : (
+                    <SaveRecipe recipeId={id} userId={user} authToken={authToken} />
+                  )}
+                </>
+              )}
+            </div>
+            <div className="likes-and-dislikes-container">
+              <div className="likes">
+                <strong>Likes:</strong>
+                {recipe.likes}
+                {isAuthenticated && !isUserOwner && (
+                  <LikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
+                )}
+              </div>
+              <div className="dislikes">
+                <strong>Dislikes:</strong>
+                {recipe.dislikes}
+                {isAuthenticated && !isUserOwner && (
+                  <DislikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
+                )}
+              </div>
             </div>
             <div className="prep-time">
               <strong>Prep time:</strong> {recipe.prep_time}
@@ -216,6 +236,9 @@ function Recipe() {
                 />
               )}
             </div>
+            {isUserOwner && (
+              <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
+            )}
           </div>
           <div className="description">
             <strong>Description:</strong> {recipe.description}
@@ -231,13 +254,6 @@ function Recipe() {
           </div>
           <div>
             {recipe.image && <img className="image" src={recipe.image} alt={recipe.title} />}
-            {movieInfo && showMovieInfo && movieInfo.poster_path && (
-              <img
-                className="recipe_movie_poster"
-                src={`https://image.tmdb.org/t/p/w500${movieInfo.poster_path}`}
-                alt={movieInfo.title}
-              />
-            )}
             {isUserOwner && (
               <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
             )}
@@ -266,86 +282,79 @@ function Recipe() {
               />
             )}
           </div>
-          <div className="meal-type">
-            <strong>Meal Type:</strong> {recipe.meal_type}
-            {isUserOwner && (
-              <UpdateRecipe
-                field="meal_type"
-                initialValue={recipe.meal_type}
-                id={id}
-                onUpdate={handleUpdate}
-                authToken={authToken}
-              />
-            )}
-          </div>
-          <div className="dietary-restriction">
-            <strong>Dietary Restriction:</strong> {recipe.dietary_restriction}
-            {isUserOwner && (
-              <UpdateRecipe
-                field="dietary_restriction"
-                initialValue={recipe.dietary_restriction}
-                id={id}
-                onUpdate={handleUpdate}
-                authToken={authToken}
-              />
-            )}
-          </div>
-          <div className="movie-genre">
-            <strong>Movie Genre:</strong>{" "}
-            {recipe.movie_genre === "sci_fi" ? "sci-fi" : recipe.movie_genre}
-            {isUserOwner && (
-              <UpdateRecipe
-                field="movie_genre"
-                initialValue={recipe.movie_genre}
-                id={id}
-                onUpdate={handleUpdate}
-                authToken={authToken}
-              />
-            )}
-          </div>
-          <button onClick={toggleMovieInfo}>
-            {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
-          </button>
-          {isAuthenticated && !isUserOwner && (
-            <>
-              {isSaved ? (
-                <UnsaveRecipe recipeId={id} userId={user} authToken={authToken} />
-              ) : (
-                <SaveRecipe recipeId={id} userId={user} authToken={authToken} />
-              )}
-            </>
-          )}
-          {!isAuthenticated && (
-            <div>
-              Please sign in to save this recipe.
-            </div>
-          )}
-          {isUserOwner && (
-            <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
-          )}
-          <div className="likes-and-dislikes-container">
-            <div className="likes">
-              <strong>Likes:</strong>
-              {recipe.likes}
-              {isAuthenticated && !isUserOwner && (
-                <LikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
+          <div className='meal-container'>
+            <div className="meal-type">
+              <strong>Meal Type:</strong> {recipe.meal_type}
+              {isUserOwner && (
+                <UpdateRecipe
+                  field="meal_type"
+                  initialValue={recipe.meal_type}
+                  id={id}
+                  onUpdate={handleUpdate}
+                  authToken={authToken}
+                />
               )}
             </div>
-            <div className="dislikes">
-              <strong>Dislikes:</strong>
-              {recipe.dislikes}
-              {isAuthenticated && !isUserOwner && (
-                <DislikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
+            <div className="dietary-restriction">
+              <strong>Dietary Restriction:</strong> {recipe.dietary_restriction}
+              {isUserOwner && (
+                <UpdateRecipe
+                  field="dietary_restriction"
+                  initialValue={recipe.dietary_restriction}
+                  id={id}
+                  onUpdate={handleUpdate}
+                  authToken={authToken}
+                />
               )}
             </div>
           </div>
-          {showMovieInfo && movieInfo && (
-            <>
-              <h4>More about this movie:</h4>
-              <p>{movieInfo.overview}</p>
-              <p>Released in {movieInfo.release_date}.</p>
-            </>
-          )}
+          <div className='movie-container'>
+            <div className="movie-title">
+              <strong>Inspired by the movie:</strong> {recipe.movie_title}
+              {isUserOwner && (
+                <UpdateRecipe
+                  field="movie_title"
+                  initialValue={recipe.movie_title}
+                  id={id}
+                  onUpdate={handleUpdate}
+                  authToken={authToken}
+                />
+              )}
+            </div>
+            <div className="movie-genre">
+              <strong>Movie Genre:</strong>{" "}
+              {recipe.movie_genre === "sci_fi" ? "sci-fi" : recipe.movie_genre}
+              {isUserOwner && (
+                <UpdateRecipe
+                  field="movie_genre"
+                  initialValue={recipe.movie_genre}
+                  id={id}
+                  onUpdate={handleUpdate}
+                  authToken={authToken}
+                />
+              )}
+            </div>
+            <button className='button' onClick={toggleMovieInfo}>
+              {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
+            </button>
+          </div>
+          <div className='movie-info-container'>
+            {showMovieInfo && movieInfo && (
+              <>
+                <p>{movieInfo.overview}</p>
+                <div><strong>Released in:</strong> {movieInfo.release_date}.</div>
+              </>
+            )}
+          </div>
+          <div className='movie-poster'>
+            {movieInfo && showMovieInfo && movieInfo.poster_path && (
+              <img
+                className="recipe_movie_poster"
+                src={`https://image.tmdb.org/t/p/w500${movieInfo.poster_path}`}
+                alt={movieInfo.title}
+              />
+            )}
+          </div>
         </>
       )}
       {!recipe && <div>Recipe not found</div>}
