@@ -9,8 +9,11 @@ import LikeRecipe from '../LikeRecipe/LikeRecipe';
 import DislikeRecipe from '../LikeRecipe/DislikeRecipe';
 import { FacebookShareButton, TwitterShareButton, PinterestShareButton } from 'react-share';
 import { jwtDecode } from 'jwt-decode';
-// import ReactHtmlParser from 'react-html-parser'
 import './Recipe.scss'
+import facebookIcon from '../../assets/facebook.png'
+import xIcon from '../../assets/twitter.png'
+import pinterestIcon from '../../assets/pinterest.png'
+import printerIcon from '../../assets/printer.png'
 
 function Recipe() {
   const [recipe, setRecipe] = useState(null);
@@ -176,14 +179,14 @@ function Recipe() {
   const isAuthenticated = authToken !== null;
 
   return (
-    <div className="recipe">
+    <div className='recipe'>
       {recipe && (
         <>
-          <h2 className="title">
+          <h2 className='title'>
             {recipe.title}
             {isUserOwner && (
               <UpdateRecipe
-                field="title"
+                field='title'
                 initialValue={recipe.title}
                 id={id}
                 onUpdate={handleUpdate}
@@ -207,16 +210,19 @@ function Recipe() {
                   )}
                 </>
               )}
+              {isUserOwner && (
+                <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
+              )}
             </div>
-            <div className="likes-and-dislikes-container">
-              <div className="likes">
+            <div className='likes-and-dislikes-container'>
+              <div className='likes'>
                 <strong>Likes:</strong>
                 {recipe.likes}
                 {isAuthenticated && !isUserOwner && (
                   <LikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
                 )}
               </div>
-              <div className="dislikes">
+              <div className='dislikes'>
                 <strong>Dislikes:</strong>
                 {recipe.dislikes}
                 {isAuthenticated && !isUserOwner && (
@@ -224,11 +230,11 @@ function Recipe() {
                 )}
               </div>
             </div>
-            <div className="prep-time">
+            <div className='prep-time'>
               <strong>Prep time:</strong> {recipe.prep_time}
               {isUserOwner && (
                 <UpdateRecipe
-                  field="prep_time"
+                  field='prep_time'
                   initialValue={recipe.prep_time}
                   id={id}
                   onUpdate={handleUpdate}
@@ -236,15 +242,12 @@ function Recipe() {
                 />
               )}
             </div>
-            {isUserOwner && (
-              <DeleteRecipe recipeId={id} onDelete={handleDelete} authToken={authToken} />
-            )}
           </div>
-          <div className="description">
+          <div className='description'>
             <strong>Description:</strong> {recipe.description}
             {isUserOwner && (
               <UpdateRecipe
-                field="description"
+                field='description'
                 initialValue={recipe.description}
                 id={id}
                 onUpdate={handleUpdate}
@@ -252,17 +255,17 @@ function Recipe() {
               />
             )}
           </div>
-          <div>
-            {recipe.image && <img className="image" src={recipe.image} alt={recipe.title} />}
+          <div className='image-container'>
+            {recipe.image && <img className='image' src={recipe.image} alt={recipe.title} />}
             {isUserOwner && (
-              <UpdateRecipe field="image" initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
+              <UpdateRecipe field='image' initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
             )}
           </div>
-          <div className="ingredients">
+          <div className='ingredients'>
             <strong>Ingredients:</strong> {recipe.ingredients}
             {isUserOwner && (
               <UpdateRecipe
-                field="ingredients"
+                field='ingredients'
                 initialValue={recipe.ingredients}
                 id={id}
                 onUpdate={handleUpdate}
@@ -270,11 +273,11 @@ function Recipe() {
               />
             )}
           </div>
-          <div className="instructions">
+          <div className='instructions'>
             <strong>Instructions:</strong> {recipe.instructions}
             {isUserOwner && (
               <UpdateRecipe
-                field="instructions"
+                field='instructions'
                 initialValue={recipe.instructions}
                 id={id}
                 onUpdate={handleUpdate}
@@ -283,11 +286,11 @@ function Recipe() {
             )}
           </div>
           <div className='meal-container'>
-            <div className="meal-type">
+            <div className='meal-type'>
               <strong>Meal Type:</strong> {recipe.meal_type}
               {isUserOwner && (
                 <UpdateRecipe
-                  field="meal_type"
+                  field='meal_type'
                   initialValue={recipe.meal_type}
                   id={id}
                   onUpdate={handleUpdate}
@@ -295,11 +298,11 @@ function Recipe() {
                 />
               )}
             </div>
-            <div className="dietary-restriction">
+            <div className='dietary-restriction'>
               <strong>Dietary Restriction:</strong> {recipe.dietary_restriction}
               {isUserOwner && (
                 <UpdateRecipe
-                  field="dietary_restriction"
+                  field='dietary_restriction'
                   initialValue={recipe.dietary_restriction}
                   id={id}
                   onUpdate={handleUpdate}
@@ -309,11 +312,11 @@ function Recipe() {
             </div>
           </div>
           <div className='movie-container'>
-            <div className="movie-title">
-              <strong>Inspired by the movie:</strong> {recipe.movie_title}
+            <div className='movie-title'>
+              <strong>Inspired by: </strong>{recipe.movie_title}
               {isUserOwner && (
                 <UpdateRecipe
-                  field="movie_title"
+                  field='movie_title'
                   initialValue={recipe.movie_title}
                   id={id}
                   onUpdate={handleUpdate}
@@ -321,12 +324,12 @@ function Recipe() {
                 />
               )}
             </div>
-            <div className="movie-genre">
+            <div className='movie-genre'>
               <strong>Movie Genre:</strong>{" "}
               {recipe.movie_genre === "sci_fi" ? "sci-fi" : recipe.movie_genre}
               {isUserOwner && (
                 <UpdateRecipe
-                  field="movie_genre"
+                  field='movie_genre'
                   initialValue={recipe.movie_genre}
                   id={id}
                   onUpdate={handleUpdate}
@@ -335,21 +338,21 @@ function Recipe() {
               )}
             </div>
             <button className='button' onClick={toggleMovieInfo}>
-              {showMovieInfo ? 'Hide Movie Info' : 'Show Movie Info'}
+              Movie info
             </button>
           </div>
           <div className='movie-info-container'>
             {showMovieInfo && movieInfo && (
               <>
                 <p>{movieInfo.overview}</p>
-                <div><strong>Released in:</strong> {movieInfo.release_date}.</div>
+                {/* <p><strong>Released</strong> {movieInfo.release_date}</p> */}
               </>
             )}
           </div>
           <div className='movie-poster'>
             {movieInfo && showMovieInfo && movieInfo.poster_path && (
               <img
-                className="recipe_movie_poster"
+                className='image'
                 src={`https://image.tmdb.org/t/p/w500${movieInfo.poster_path}`}
                 alt={movieInfo.title}
               />
@@ -360,15 +363,19 @@ function Recipe() {
       {!recipe && <div>Recipe not found</div>}
       {recipe && (
         <div className='socials'>
+          <p><strong>Share</strong></p>
           <FacebookShareButton url={recipeUrl} quote={recipe.title}>
-            Share on Facebook
+            <img className='social-icon' src={facebookIcon} alt='Facebook' />
           </FacebookShareButton>
           <TwitterShareButton url={recipeUrl} title={recipe.title}>
-            Share on Twitter/X
+            <img className='social-icon' src={xIcon} alt='X/Twitter' />
           </TwitterShareButton>
-          <PinterestShareButton url={recipeUrl} description={recipe.title}>
-            Share on Pinterest
+          <PinterestShareButton url={recipeUrl} description={recipe.title} media={pinterestIcon}>
+            <img className='social-icon' src={pinterestIcon} alt='Pinterest' />
           </PinterestShareButton>
+          <a href='#' onClick={() => window.print()}>
+            <img className='social-icon' src={printerIcon} alt='Print' />
+          </a>
         </div>
       )}
     </div>

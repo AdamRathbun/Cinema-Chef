@@ -129,7 +129,7 @@ const AuthComponent = () => {
           )}
           {!isLoginFormVisible && !isRegisterFormVisible && (
             <div className="auth-options">
-              <div className="auth-message" onClick={toggleLoginFormVisibility}>Login</div>
+              <div className="auth-message initial" onClick={toggleLoginFormVisibility}>Login</div>
             </div>
           )}
         </div>

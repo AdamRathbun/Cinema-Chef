@@ -1,15 +1,15 @@
 @import '../mixins.scss';
 
 .recipe {
-  margin: 0 auto;
-  max-width: 1300px;
+  margin: 20px auto;
+  max-width: 1100px;
   padding: 0 2%;
   display: flex;
   flex-direction: column;
   align-items: center;
 
   @include tablet {
-    max-width: 800px;
+    max-width: 750px;
   }
 }
 
@@ -18,12 +18,27 @@
 .ingredients,
 .instructions,
 .socials {
-  width: 1100px;
+  width: 900px;
   margin-top: 30px;
   margin-left: auto;
   margin-right: auto;
-
   text-align: left;
+
+  @include tablet {
+    width: 600px;
+    margin-left: 50px;
+    margin-right: 50px;
+  }
+
+  @include phone {
+    width: 320px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.description {
+  margin-bottom: 20px;
 }
 
 .title {
@@ -43,11 +58,22 @@
   display: flex;
   flex-direction: row;
   padding: 0 10px;
-  width: 1100px;
+  width: 900px;
   margin-top: 20px;
 
+  p,
   div {
     padding-right: 30px;
+  }
+
+  @include tablet {
+    width: 600px;
+  }
+
+  @include phone {
+    width: 320px;
+    flex-direction: column;
+
   }
 }
 
@@ -78,5 +104,54 @@
   cursor: pointer;
   transition: background-color .1s ease;
   height: 30px;
-  width: auto;
+  width: 100px;
+}
+
+.movie-container {
+  .button {
+    @include phone {
+      margin-top: 10px;
+    }
+  }
+}
+
+.movie-poster {
+  margin: 10px 0;
+}
+
+.socials {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+
+  @include phone {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+.social-icon {
+  width: 40px;
+  margin-left: 12px;
+}
+
+.image-container {
+  max-width: 100%;
+}
+
+.image {
+  max-width: 900px;
+  object-fit: cover;
+  max-height: 600px;
+
+  @include tablet {
+    max-width: 600px;
+    max-height: 450px;
+  }
+
+  @include phone {
+    max-width: 320px;
+    max-height: 300px;
+  }
 }

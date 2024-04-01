@@ -13,26 +13,32 @@ function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleMenuClick = () => {
+    setIsMenuOpen(false)
+  }
+
   return (
     <nav className='navbar'>
-      <div className="menu-toggle" onClick={handleMenuToggle}>
-        <img src={menuIcon} alt="Menu" />
+      <div className='menu-and-logo-container'>
+        <div className="menu-toggle" onClick={handleMenuToggle}>
+          <img src={menuIcon} alt="Menu" />
+        </div>
+        <h2 className='logo'>
+          <Link to="/" className='navbar__link'>CinemaChef</Link>
+        </h2>
       </div>
-      <h2 className='logo'>
-        <Link to="/" className='navbar__link'>CinemaChef</Link>
-      </h2>
       {isMenuOpen && (
         <ul className={`dropdown-menu ${isMenuOpen ? 'open' : ''}`}>
-          <li className={`navbar__item ${location.pathname === '/' ? 'active' : ''}`}>
+          <li className={`navbar__item ${location.pathname === '/' ? 'active' : ''}`} onClick={handleMenuClick}>
             <Link to="/" className='navbar__link'>Home</Link>
           </li>
-          <li className={`navbar__item ${location.pathname === '/user-recipes' ? 'active' : ''}`}>
+          <li className={`navbar__item ${location.pathname === '/user-recipes' ? 'active' : ''}`} onClick={handleMenuClick}>
             <Link to="/user-recipes" className='navbar__link'>Your recipes</Link>
           </li>
-          <li className={`navbar__item ${location.pathname === '/saved-recipes' ? 'active' : ''}`}>
+          <li className={`navbar__item ${location.pathname === '/saved-recipes' ? 'active' : ''}`} onClick={handleMenuClick}>
             <Link to={`/saved-recipes`} className='navbar__link'>Saved recipes</Link>
           </li>
-          <li className={`navbar__item ${location.pathname === '/add-recipe' ? 'active' : ''}`}>
+          <li className={`navbar__item ${location.pathname === '/add-recipe' ? 'active' : ''}`} onClick={handleMenuClick}>
             <Link to="/add-recipe" className='navbar__link'>Add a recipe</Link>
           </li>
           <div className='navbar__login'>
