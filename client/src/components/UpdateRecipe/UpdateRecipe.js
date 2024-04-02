@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './UpdateRecipe.scss';
 
 function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -70,7 +71,7 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
   return (
     <div>
       {isEditing ? (
-        <form onSubmit={handleSubmit}>
+        <form className='form-container' onSubmit={handleSubmit}>
           {field === 'image' ? (
             <>
               <label>Choose new image</label>
@@ -78,7 +79,6 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
             </>
           ) : (
             <>
-              <label>{field}</label>
               {field === 'meal_type' && (
                 <select value={value} onChange={handleChange}>
                   <option value="">Select Meal Type</option>
@@ -113,15 +113,23 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
                 </select>
               )}
               {(field !== 'meal_type' && field !== 'dietary_restriction' && field !== 'movie_genre') && (
-                <textarea name={field} value={value} onChange={handleChange} required />
+                <textarea
+                  name={field}
+                  value={value}
+                  onChange={handleChange}
+                  required
+                  className={(field === 'description' || field === 'instructions') ? 'min-height-field' : (field === 'ingredients') ? 'min-height-field-small' : ''}
+                />
               )}
             </>
           )}
-          <button type="submit">Update</button>
-          <button type="button" onClick={handleCancel}>Cancel</button>
+          <div className='update-button-container'>
+            <button className='update-button' type="submit">Update</button>
+            <button className='update-button' type="button" onClick={handleCancel}>Cancel</button>
+          </div>
         </form>
       ) : (
-        <button type="button" onClick={handleEdit}>Edit {field}</button>
+        <button className='update-button' type="button" onClick={handleEdit}>Edit</button>
       )}
     </div>
   );

@@ -35,7 +35,7 @@
     display: block;
     cursor: pointer;
     padding-left: 20px;
-    padding-right: 30px;
+    margin-right: 30px;
 
     @include desktop {
       display: none;
@@ -48,6 +48,7 @@
 
     @include phone {
       padding-left: 0px;
+      margin-right: 40px;
     }
   }
 

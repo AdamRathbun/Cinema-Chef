@@ -8,6 +8,7 @@ import YourRecipes from './components/YourRecipes/YourRecipes';
 import SavedRecipes from './components/SavedRecipes/SavedRecipes';
 import SearchResults from './components/SearchResults/SearchResults';
 import SearchBarResults from './components/SearchBarResults/SearchBarResults';
+import Footer from './components/Footer/Footer';
 import { jwtDecode } from 'jwt-decode';
 
 function App() {
@@ -33,13 +34,12 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/add-recipe' element={<AddRecipe />} />
         <Route path='/user-recipes' element={<YourRecipes />} />
-
         <Route path='/saved-recipes' element={<SavedRecipes />} />
-
         <Route path='/recipes/:id' element={<Recipe />} />
         <Route path="/search/:searchType/:searchTerm" element={<SearchResults />} />
         <Route path='/search/recipe-name/:searchTerm' element={<SearchBarResults />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

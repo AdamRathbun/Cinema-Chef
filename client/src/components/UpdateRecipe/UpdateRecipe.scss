@@ -1,0 +1,44 @@
+@import '../mixins.scss';
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+
+  textarea {
+    margin-top: 10px;
+    min-height: 30px;
+  }
+
+  .min-height-field {
+    min-height: 260px;
+  }
+
+  .min-height-field-small {
+    min-height: 100px;
+  }
+}
+
+.update-button {
+  padding: 8px 16px;
+  // background-color: #FFF7E7;
+  // color: #514538;
+
+  background-color: #B8A99A;
+  color: white;
+  border: none;
+  // border: 1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color .1s ease;
+  height: 30px;
+  width: 80px;
+  margin-top: 5px;
+}
+
+.update-button-container {
+  button {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+}
