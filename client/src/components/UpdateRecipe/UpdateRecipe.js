@@ -118,7 +118,7 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
                   value={value}
                   onChange={handleChange}
                   required
-                  className={(field === 'description' || field === 'instructions') ? 'min-height-field' : (field === 'ingredients') ? 'min-height-field-small' : ''}
+                  className={(field === 'description' || field === 'instructions') ? 'min-height-field' : (field === 'ingredients') ? 'min-height-field--small' : ''}
                 />
               )}
             </>

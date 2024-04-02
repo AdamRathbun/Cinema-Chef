@@ -14,20 +14,16 @@
     min-height: 260px;
   }
 
-  .min-height-field-small {
+  .min-height-field--small {
     min-height: 100px;
   }
 }
 
 .update-button {
   padding: 8px 16px;
-  // background-color: #FFF7E7;
-  // color: #514538;
-
   background-color: #B8A99A;
   color: white;
   border: none;
-  // border: 1px solid black;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color .1s ease;

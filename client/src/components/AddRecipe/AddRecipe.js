@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
+import './AddRecipe.scss'
 
 function AddRecipe() {
   const [formData, setFormData] = useState({
@@ -91,11 +92,11 @@ function AddRecipe() {
   };
 
   return (
-    <div>
-      <h2>Add Recipe</h2>
+    <div className='add-recipe-container'>
+      <h2>What are you cooking up?</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title</label>
+        <div className='form--small'>
+          <label>Recipe Title</label>
           <input
             type='text'
             name='title'
@@ -105,69 +106,80 @@ function AddRecipe() {
           />
         </div>
         <div>
-          <label>Prep Time</label>
-          <input
-            name='prep_time'
-            value={formData.prep_time}
-            onChange={handleChange}
-          />
+          <div className='form--small'>
+            <label>Prep Time (e.g. 1 hour and 30mins)</label>
+            <input
+              name='prep_time'
+              value={formData.prep_time}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
-        <div>
+        <div className='form'>
           <label>Description</label>
-          <input
+          <p>Talk a little about your recipe, how you got the idea, what makes it one of your favorites, etc.</p>
+          <textarea
             name='description'
             value={formData.description}
             onChange={handleChange}
+            className='min-height-field'
           />
         </div>
-        <div>
+        <div className='form'>
           <label>Ingredients</label>
+          <p>Write out your ingredients along with the measurement (e.g. 1 cup of flour).</p>
           <textarea
             name='ingredients'
             value={formData.ingredients}
             onChange={handleChange}
+            className='min-height-field--small'
             required
           />
         </div>
-        <div>
+        <div className='form'>
           <label>Instructions</label>
+          <p>Detail how to make your recipe, including preparation method, pan sizes, oven temperatures, etc.</p>
           <textarea
             name='instructions'
             value={formData.instructions}
             onChange={handleChange}
+            className='min-height-field'
             required
           />
         </div>
-        <div>
-          <label>Movie Title</label>
-          <textarea
+        <div className='meal-type-and-diet'>
+          <div className='selection'>
+            <label>Meal Type</label>
+            <select name='meal_type' value={formData.meal_type} onChange={handleChange}>
+              <option value=''>Select Meal Type</option>
+              <option value='breakfast'>Breakfast</option>
+              <option value='lunch'>Lunch</option>
+              <option value='dinner'>Dinner</option>
+              <option value='dessert'>Dessert</option>
+            </select>
+          </div>
+          <div className='selection'>
+            <label>Dietary Restriction</label>
+            <select name='dietary_restriction' value={formData.dietary_restriction} onChange={handleChange}>
+              <option value=''>Select Dietary Restriction</option>
+              <option value='vegan'>Vegan</option>
+              <option value='vegetarian'>Vegetarian</option>
+              <option value='gluten_free'>Gluten-free</option>
+              <option value='none'>None</option>
+            </select>
+          </div>
+        </div>
+        <div className='form--small'>
+          <label>Movie Inspiration</label>
+          <input
             name='movie_title'
             value={formData.movie_title}
             onChange={handleChange}
             required
           />
         </div>
-        <div>
-          <label>Meal Type</label>
-          <select name='meal_type' value={formData.meal_type} onChange={handleChange}>
-            <option value=''>Select Meal Type</option>
-            <option value='breakfast'>Breakfast</option>
-            <option value='lunch'>Lunch</option>
-            <option value='dinner'>Dinner</option>
-            <option value='dessert'>Dessert</option>
-          </select>
-        </div>
-        <div>
-          <label>Dietary Restriction</label>
-          <select name='dietary_restriction' value={formData.dietary_restriction} onChange={handleChange}>
-            <option value=''>Select Dietary Restriction</option>
-            <option value='vegan'>Vegan</option>
-            <option value='vegetarian'>Vegetarian</option>
-            <option value='gluten_free'>Gluten-free</option>
-            <option value='none'>None</option>
-          </select>
-        </div>
-        <div>
+        <div className='selection'>
           <label>Movie Genre</label>
           <select name='movie_genre' value={formData.movie_genre} onChange={handleChange}>
             <option value=''>Select Movie Genre</option>
@@ -183,11 +195,11 @@ function AddRecipe() {
             <option value='documentary'>Documentary</option>
           </select>
         </div>
-        <div>
+        <div className='selection'>
           <label>Image</label>
           <input type='file' name='image' onChange={handleImageChange} />
         </div>
-        <button type='submit'>Submit</button>
+        <button className='button--submit' type='submit'>Submit</button>
       </form>
       {message && <div>{message}</div>}
     </div>
