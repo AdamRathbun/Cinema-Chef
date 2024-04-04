@@ -199,7 +199,7 @@ function Recipe() {
             <div>
               {!isAuthenticated && (
                 <div>
-                  Please sign in to save this recipe.
+                  Sign in to save recipe
                 </div>
               )}
               {isAuthenticated && !isUserOwner && (
@@ -232,7 +232,7 @@ function Recipe() {
               </div>
             </div>
             <div className='prep-time'>
-              <strong>Prep time:</strong> {recipe.prep_time}
+              <strong>Time:</strong> {recipe.prep_time}
               {isUserOwner && (
                 <UpdateRecipe
                   field='prep_time'
@@ -288,7 +288,7 @@ function Recipe() {
           </div>
           <div className='meal-container'>
             <div className='meal-type'>
-              <strong>Meal Type:</strong> {recipe.meal_type}
+              <strong>Category:</strong> {recipe.meal_type}
               {isUserOwner && (
                 <UpdateRecipe
                   field='meal_type'

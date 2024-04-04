@@ -81,11 +81,12 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
             <>
               {field === 'meal_type' && (
                 <select value={value} onChange={handleChange}>
-                  <option value="">Select Meal Type</option>
+                  <option value="">Category</option>
                   <option value="breakfast">Breakfast</option>
                   <option value="lunch">Lunch</option>
                   <option value="dinner">Dinner</option>
                   <option value="dessert">Dessert</option>
+                  <option value="drink">Drink</option>
                 </select>
               )}
               {field === 'dietary_restriction' && (

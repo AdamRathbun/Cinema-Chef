@@ -29,6 +29,8 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    z-index: 1001;
+
   }
 
   .menu-toggle {
@@ -63,6 +65,7 @@
     padding: 10px;
     box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
     border-radius: .8px;
+    z-index: 1000;
 
     @include tablet {
       margin-left: 80px
@@ -113,7 +116,6 @@
 
     &.active {
       font-weight: bold;
-      border-bottom: 2px solid #FFA500;
 
       @include tablet {
         border-bottom: 0;
@@ -154,5 +156,13 @@
     }
   }
 
-
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
 }

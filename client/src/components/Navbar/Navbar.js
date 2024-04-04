@@ -27,6 +27,7 @@ function Navbar() {
           <Link to="/" className='navbar__link'>CinemaChef</Link>
         </h2>
       </div>
+      {isMenuOpen && <div className="overlay" onClick={handleMenuToggle} />}
       {isMenuOpen && (
         <ul className={`dropdown-menu ${isMenuOpen ? 'open' : ''}`}>
           <li className={`navbar__item ${location.pathname === '/' ? 'active' : ''}`} onClick={handleMenuClick}>

@@ -1,0 +1,245 @@
+@import '../mixins.scss';
+
+.search-section {
+  display: flex;
+  flex-direction: row;
+
+  @include tablet {
+    width: 100%;
+  }
+}
+
+.tag-section {
+  display: flex;
+  flex-direction: column;
+  margin: 0 30px;
+  justify-content: space-between;
+}
+
+.home {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1100px;
+  padding: 0 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @include tablet {
+    max-width: 750px;
+    align-items: flex-start;
+    padding: 0 2%;
+  }
+
+  @include phone {
+    max-width: 320px;
+  }
+
+  h1 {
+    margin-bottom: 50px;
+    font-size: 36px;
+
+    @include tablet {
+      // margin-left: 40px;
+      // margin-right: 40px;
+      // width: 600px;
+    }
+  }
+}
+
+.showcase-section {
+  display: flex;
+  gap: 20px;
+
+  @include desktop {
+    .headline-section {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .highlighted-section {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  @include tablet {
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+  }
+}
+
+.headline-section {
+  @include tablet {
+    // margin-left: 40px;
+    // margin-right: 40px;
+
+    h2 {
+      text-align: center;
+    }
+  }
+}
+
+.highlighted-section {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  @include tablet {
+    width: 650px;
+
+    h2 {
+      text-align: center;
+    }
+  }
+}
+
+.headline-recipe {
+  img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 5px;
+    max-height: 300px;
+    object-fit: cover;
+  }
+
+  // @include tablet {
+  //   width: 100%;
+  // }
+}
+
+.highlighted-recipe {
+  width: 100%;
+}
+
+.highlighted-recipes {
+  border-radius: 10px;
+  background-color: #FFECCC;
+  padding: 5px 20px;
+
+  h2 {
+    margin-bottom: 20px;
+
+    @include tablet {
+      margin-left: 20px;
+    }
+  }
+
+  @include tablet {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+}
+
+.highlighted-recipe__content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  h3 {
+    width: 200px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+    @include tablet {
+      width: 300px;
+    }
+  }
+
+  img {
+    width: 150px;
+    height: 120px;
+    object-fit: cover;
+    margin-bottom: 5px;
+
+    @include tablet {
+      width: 250px;
+      margin-left: 20px;
+    }
+  }
+}
+
+.image--headline {
+  @include tablet {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+h3 {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+
+  li {
+    list-style: none;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      text-align: center;
+
+      h3 {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  img {
+    margin-bottom: 1px;
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    object-fit: cover;
+  }
+}
+
+.band {
+  height: 170px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 50px;
+  background-color: #FFC0B7;
+  color: #FFF8F0;
+
+  @include tablet {
+    font-size: 36px;
+  }
+
+  @include phone {
+    font-size: 19px;
+  }
+}
+
+.drink {
+  background-color: #F9F871;
+  color: black;
+}

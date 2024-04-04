@@ -152,11 +152,12 @@ function AddRecipe() {
           <div className='selection'>
             <label>Meal Type</label>
             <select name='meal_type' value={formData.meal_type} onChange={handleChange}>
-              <option value=''>Select Meal Type</option>
+              <option value=''>Category</option>
               <option value='breakfast'>Breakfast</option>
               <option value='lunch'>Lunch</option>
               <option value='dinner'>Dinner</option>
               <option value='dessert'>Dessert</option>
+              <option value='drink'>Drink</option>
             </select>
           </div>
           <div className='selection'>
