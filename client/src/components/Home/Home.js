@@ -57,12 +57,12 @@ function Home() {
           {likedRecipes.length > 0 && (
             <div className="headline-recipe">
               <Link to={`/recipes/${likedRecipes[0].recipe_id}`}>
-                <h3>{likedRecipes[0].title}</h3>
                 <div className='image--headline'>
                   {likedRecipes[0].image &&
                     <img src={likedRecipes[0].image} alt={likedRecipes[0].title}
                     />}
                 </div>
+                <h3>{likedRecipes[0].title}</h3>
                 <p>{truncate(likedRecipes[0].description)}</p>
               </Link>
             </div>
@@ -111,7 +111,7 @@ function Home() {
           .filter(recipe => recipe.meal_type === 'dessert')
           .slice(0, 6)
           .map((recipe) => (
-            <div key={recipe.recipe_id}>
+            <div className='grid-unit' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <img className='image' src={recipe.image} alt={recipe.title} />
                 <h3>{recipe.title}</h3>
@@ -125,12 +125,12 @@ function Home() {
         <h5>Sensational Sippers for Every Occassion</h5>
       </div>
 
-      <div className="grid">
+      <div className='grid'>
         {likedRecipesWithImages
           .filter(recipe => recipe.meal_type === 'drink')
           .slice(0, 6)
           .map((recipe) => (
-            <div key={recipe.recipe_id}>
+            <div className='grid-unit' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <img className='image' src={recipe.image} alt={recipe.title} />
                 <h3>{recipe.title}</h3>
