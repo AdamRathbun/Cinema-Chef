@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchTag from '../SearchTag/SearchTag';
-import './Home.scss'
+import './Home.scss';
 
 function Home() {
   const [likedRecipes, setLikedRecipes] = useState([]);
@@ -49,7 +49,7 @@ function Home() {
 
   return (
     <div className='home'>
-      <h1>Explore culinary recipes based on cinematic masterpieces</h1>
+      <h1>Explore culinary creations based on cinematic masterpieces</h1>
 
       <div className='showcase-section'>
         <div className="headline-section">

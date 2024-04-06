@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
+import './SearchBarResults.scss';
+import defaultImage from '../../assets/default.png';
 
 const SearchBarResults = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -26,22 +28,33 @@ const SearchBarResults = () => {
   }, [authToken, searchTerm]);
 
   return (
-    <div>
+    <div className='overall'>
       <h2>Search Results</h2>
       {searchResults.length === 0 ? (
         <h3>No recipes matching that search.</h3>
       ) : (
-        <ul>
+        <div className='grid'>
           {searchResults.map((recipe) => (
-            <li key={recipe.recipe_id}>
+            <div className='grid-unit--large' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <h3>{recipe.title}</h3>
-                <p>{recipe.movie_title}</p>
-                {recipe.image && <img src={recipe.image} alt={recipe.title} />}
+                {recipe.image ? (
+                  <img src={recipe.image} alt={recipe.title} />
+                ) : (
+                  <img id='image--default' src={defaultImage} alt='No recipe image.' />
+                )
+                }
+                <p>Meal Type: {recipe.meal_type}</p>
+                {recipe.dietary_restriction === 'gluten_free' ? (
+                  <p>Dietary Restriction: gluten free</p>
+                ) : (
+                  <p>Dietary Restriction: {recipe.dietary_restriction}</p>
+                )
+                }
               </Link>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

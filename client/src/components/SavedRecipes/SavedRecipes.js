@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'
-import defaultImage from '../../assets/default.png'
-import './SavedRecipes.scss'
+import { Link } from 'react-router-dom';
+import defaultImage from '../../assets/default.png';
+import './SavedRecipes.scss';
 
 function SavedRecipes() {
   const [savedRecipes, setSavedRecipes] = useState([]);

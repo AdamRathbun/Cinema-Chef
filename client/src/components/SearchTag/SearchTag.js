@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './SearchTag.scss'
+import './SearchTag.scss';
 
 function SearchTag({ tags, onSearch, searchType }) {
   const [selectedTag, setSelectedTag] = useState('');

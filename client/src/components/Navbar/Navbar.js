@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AuthComponent from '../Auth/Auth';
 import SearchBar from '../SearchBar/SearchBar';
-import './Navbar.scss'
-import menuIcon from '../../assets/bars.png'
+import './Navbar.scss';
+import menuIcon from '../../assets/bars.png';
 
 function Navbar() {
   const location = useLocation();

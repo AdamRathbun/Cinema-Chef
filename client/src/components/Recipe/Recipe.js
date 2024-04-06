@@ -7,14 +7,13 @@ import SaveRecipe from '../SaveRecipe/SaveRecipe';
 import UnsaveRecipe from '../SaveRecipe/UnsaveRecipe';
 import LikeRecipe from '../LikeRecipe/LikeRecipe';
 import DislikeRecipe from '../LikeRecipe/DislikeRecipe';
-import Footer from '../Footer/Footer';
 import { FacebookShareButton, TwitterShareButton, PinterestShareButton } from 'react-share';
 import { jwtDecode } from 'jwt-decode';
-import './Recipe.scss'
-import facebookIcon from '../../assets/facebook.png'
-import xIcon from '../../assets/twitter.png'
-import pinterestIcon from '../../assets/pinterest.png'
-import printerIcon from '../../assets/printer.png'
+import './Recipe.scss';
+import facebookIcon from '../../assets/facebook.png';
+import xIcon from '../../assets/twitter.png';
+import pinterestIcon from '../../assets/pinterest.png';
+import printerIcon from '../../assets/printer.png';
 
 function Recipe() {
   const [recipe, setRecipe] = useState(null);

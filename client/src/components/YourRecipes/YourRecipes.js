@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './YourRecipes.scss'
-import defaultImage from '../../assets/default.png'
+import './YourRecipes.scss';
+import defaultImage from '../../assets/default.png';
 
 const YourRecipes = () => {
   const [userRecipes, setUserRecipes] = useState([]);
