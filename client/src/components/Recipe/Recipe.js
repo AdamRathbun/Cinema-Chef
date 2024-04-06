@@ -300,7 +300,8 @@ function Recipe() {
               )}
             </div>
             <div className='dietary-restriction'>
-              <strong>Dietary Restriction:</strong> {recipe.dietary_restriction}
+              <strong>Dietary Restriction:</strong>{' '}
+              {recipe.dietary_restriction === 'gluten_free' ? 'gluten free' : recipe.dietary_restriction}
               {isUserOwner && (
                 <UpdateRecipe
                   field='dietary_restriction'
@@ -326,8 +327,8 @@ function Recipe() {
               )}
             </div>
             <div className='movie-genre'>
-              <strong>Movie Genre:</strong>{" "}
-              {recipe.movie_genre === "sci_fi" ? "sci-fi" : recipe.movie_genre}
+              <strong>Movie Genre:</strong>{' '}
+              {recipe.movie_genre === 'sci_fi' ? 'sci-fi' : recipe.movie_genre}
               {isUserOwner && (
                 <UpdateRecipe
                   field='movie_genre'
@@ -339,7 +340,7 @@ function Recipe() {
               )}
             </div>
             <button className='button' onClick={toggleMovieInfo}>
-              Movie info
+              Movie
             </button>
           </div>
           <div className='movie-info-container'>

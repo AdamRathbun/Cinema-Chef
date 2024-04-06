@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import './YourRecipes.scss'
+import defaultImage from '../../assets/default.png'
 
 const YourRecipes = () => {
   const [userRecipes, setUserRecipes] = useState([]);
@@ -27,20 +29,24 @@ const YourRecipes = () => {
   }, [authToken]);
 
   return (
-    <div>
+    <div className='overall'>
       <h2>Your Recipes</h2>
       {authToken ? (
-        <ul>
+        <div className='grid'>
           {userRecipes.map((recipe) => (
-            <li key={recipe.recipe_id}>
+            <div className='grid-unit' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <h3>{recipe.title}</h3>
-                <p>{recipe.movie_title}</p>
-                {recipe.image && <img src={recipe.image} alt={recipe.title} />}
+                {recipe.image ? (
+                  <img src={recipe.image} alt={recipe.title} />
+                ) : (
+                  <img id='image--default' src={defaultImage} alt='No recipe image.' />
+                )
+                }
               </Link>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>Please log in to view your recipes.</p>
       )}

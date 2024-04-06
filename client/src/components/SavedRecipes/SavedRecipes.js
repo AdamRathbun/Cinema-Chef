@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
+import defaultImage from '../../assets/default.png'
+import './SavedRecipes.scss'
 
 function SavedRecipes() {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -27,24 +29,31 @@ function SavedRecipes() {
   }, [authToken]);
 
   return (
-    <div>
+    <div className='overall'>
       <h2>Saved Recipes</h2>
       {authToken ? (
-        <ul>
-          {savedRecipes.map((savedRecipe) => (
-            <li key={savedRecipe.recipe_id}>
-              <Link to={`/recipes/${savedRecipe.recipe_id}`}>
-                <p>Title: {savedRecipe.title}</p>
-                <p>Movie Title: {savedRecipe.movie_title}</p>
-                <p>Meal Type: {savedRecipe.meal_type}</p>
-                {savedRecipe.dietary_restriction !== 'none' && (
-                  <p>Dietary Restriction: {savedRecipe.dietary_restriction}</p>
-                )}
-                <p>Likes: {savedRecipe.likes}</p>
+        <div className='grid'>
+          {savedRecipes.map((recipe) => (
+            <div className='grid-unit--large' key={recipe.recipe_id}>
+              <Link to={`/recipes/${recipe.recipe_id}`}>
+                <h3>{recipe.title}</h3>
+                {recipe.image ? (
+                  <img src={recipe.image} alt={recipe.title} />
+                ) : (
+                  <img id='image--default' src={defaultImage} alt='No recipe image.' />
+                )
+                }
+                <p>Meal Type: {recipe.meal_type}</p>
+                {recipe.dietary_restriction === 'gluten_free' ? (
+                  <p>Dietary Restriction: gluten free</p>
+                ) : (
+                  <p>Dietary Restriction: {recipe.dietary_restriction}</p>
+                )
+                }
               </Link>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>Please log in to view your saved recipes.</p>
       )}

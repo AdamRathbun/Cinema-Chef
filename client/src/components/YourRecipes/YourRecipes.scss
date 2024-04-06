@@ -1,0 +1,105 @@
+@import '../mixins.scss';
+
+.overall {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1100px;
+  padding: 0 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @include tablet {
+    padding: 0 2%;
+  }
+
+  @include phone {
+    padding: 0 4%;
+  }
+
+  h1 {
+    margin-bottom: 50px;
+    font-size: 36px;
+
+    @include tablet {
+      font-size: 27px;
+      text-align: left;
+      width: 600px;
+      margin-bottom: 10px;
+    }
+
+    @include phone {
+      font-size: 24px;
+      width: 340px;
+    }
+  }
+}
+
+.grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 20px;
+
+  li {
+    list-style: none;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      text-align: center;
+
+      h3 {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  @include tablet {
+    margin-top: 30px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+
+  @include phone {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+}
+
+.grid-unit {
+  width: 320px;
+  height: 340px;
+
+  h3 {
+    height: 50px;
+    display: block;
+    margin-top: 5px;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  img {
+    margin-bottom: 1px;
+    width: 320px;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  @include phone {
+    height: 330px;
+  }
+}
+
+#image--default {
+  object-fit: contain;
+}
