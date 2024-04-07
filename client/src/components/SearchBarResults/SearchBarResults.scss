@@ -100,3 +100,30 @@
 #image--default {
   object-fit: contain;
 }
+
+.button--page {
+  padding: 8px 16px;
+  background-color: #402E32;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color .1s ease;
+  height: 30px;
+  width: 45px;
+  margin-top: 5px;
+  margin-right: 5px;
+
+  @include tablet {
+    width: 60px;
+    height: 35px;
+  }
+
+  @include phone {
+    width: 45px;
+  }
+}
+
+.active-page {
+  background-color: #B8A99A;
+}

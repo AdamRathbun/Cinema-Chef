@@ -257,6 +257,9 @@ function Recipe() {
           </div>
           <div className='image-container'>
             {recipe.image && <img className='image' src={recipe.image} alt={recipe.title} />}
+            {!recipe.image && isUserOwner && (
+              <p><strong>Add image:</strong></p>
+            )}
             {isUserOwner && (
               <UpdateRecipe field='image' initialValue={recipe.image} id={id} onUpdate={handleUpdate} authToken={authToken} />
             )}
