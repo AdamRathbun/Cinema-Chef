@@ -17,13 +17,13 @@
     flex-direction: column;
     justify-content: center;
     width: 600px;
-    height: 150px;
+    height: 160px;
     margin-top: 10px;
   }
 
   @include phone {
     width: 320px;
-    height: 200px;
+    height: 240px;
   }
 }
 
@@ -32,6 +32,11 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+
+  @include phone {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 a {
