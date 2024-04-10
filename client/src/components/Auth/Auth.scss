@@ -66,6 +66,10 @@
     background-color: #FF8C00;
     cursor: pointer;
   }
+
+  @include phone {
+    width: 82px;
+  }
 }
 
 .auth-form label {

@@ -40,6 +40,14 @@ function SavedRecipes() {
   const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
   const currentRecipes = savedRecipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
 
+  function truncateTitle(text) {
+    const max = 48
+    if (text.length > max) {
+      return text.substring(0, max) + '...'
+    }
+    return text
+  }
+
   return (
     <div className='overall'>
       <h2>Saved Recipes</h2>
@@ -49,7 +57,7 @@ function SavedRecipes() {
             {currentRecipes.map((recipe) => (
               <div className='grid-unit--large' key={recipe.recipe_id}>
                 <Link to={`/recipes/${recipe.recipe_id}`}>
-                  <h3>{recipe.title}</h3>
+                  <h3>{truncateTitle(recipe.title)}</h3>
                   {recipe.image ? (
                     <img src={recipe.image} alt={recipe.title} />
                   ) : (

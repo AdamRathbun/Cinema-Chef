@@ -28,7 +28,6 @@ function Home() {
       const modifiedTag = searchType === 'movie-genre' && tag === 'sci-fi' ? 'sci_fi' : tag;
 
       const response = await axios.get(`http://localhost:5000/recipes/${searchType}/${modifiedTag}`);
-      console.log(`Recipes with ${searchType} ${modifiedTag}:`, response.data);
       navigate(`/search/${searchType}/${modifiedTag}`)
     } catch (error) {
       console.error(`Error fetching recipes with ${searchType}:`, error);
@@ -40,12 +39,27 @@ function Home() {
     if (text.length > max) {
       return text.substring(0, max) + '...'
     }
+    return text
   }
 
-  const likedRecipesWithImages = likedRecipes.filter(recipe => recipe.image);
-  const likedRecipesWithoutImages = likedRecipes.filter(recipe => !recipe.image);
+  function truncateTitle(text) {
+    const max = 48
+    if (text.length > max) {
+      return text.substring(0, max) + '...'
+    }
+    return text
+  }
 
-  console.log(likedRecipes)
+  function truncateTitleLong(text) {
+    const max = 56
+    if (text.length > max) {
+      return text.substring(0, max) + '...'
+    }
+    return text
+  }
+
+
+  const likedRecipesWithImages = likedRecipes.filter(recipe => recipe.image);
 
   return (
     <div className='home'>
@@ -62,7 +76,7 @@ function Home() {
                     <img src={likedRecipes[0].image} alt={likedRecipes[0].title}
                     />}
                 </div>
-                <h3>{likedRecipes[0].title}</h3>
+                <h3>{truncateTitleLong(likedRecipes[0].title)}</h3>
                 <p>{truncate(likedRecipes[0].description)}</p>
               </Link>
             </div>
@@ -78,7 +92,7 @@ function Home() {
                     {recipe.image &&
                       <img className='image' src={recipe.image} alt={recipe.title}
                       />}
-                    <h3>{recipe.title}</h3>
+                    <h3>{truncateTitle(recipe.title)}</h3>
                   </div>
                 </Link>
               </div>
@@ -114,7 +128,7 @@ function Home() {
             <div className='grid-unit' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <img className='image' src={recipe.image} alt={recipe.title} />
-                <h3>{recipe.title}</h3>
+                <h3>{truncateTitle(recipe.title)}</h3>
                 <p>Likes: {recipe.likes}</p>
               </Link>
             </div>
@@ -133,7 +147,7 @@ function Home() {
             <div className='grid-unit' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <img className='image' src={recipe.image} alt={recipe.title} />
-                <h3>{recipe.title}</h3>
+                <h3>{truncateTitle(recipe.title)}</h3>
                 <p>Likes: {recipe.likes}</p>
               </Link>
             </div>

@@ -23,7 +23,6 @@ const SearchBar = () => {
       const response = await axios.get(`http://localhost:5000/recipes/search/recipe-name/${query}`);
       const searchResults = response.data;
 
-      console.log('Search results:', searchResults);
       navigate(`/search/recipe-name/${query}`);
       setQuery('');
     } catch (error) {

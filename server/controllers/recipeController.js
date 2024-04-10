@@ -244,7 +244,6 @@ const getSavedRecipes = async (req, res) => {
     const result = await pool.query(query);
     const savedRecipes = result.rows;
 
-    console.log(savedRecipes)
     res.json(savedRecipes);
   } catch (error) {
     console.error('Error fetching saved recipes:', error);

@@ -453,7 +453,6 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
         const oldImagePath = path.join(__dirname, 'upload-image', path.basename(oldImageUrl));
         try {
           await fs.unlink(oldImagePath);
-          console.log('Old image file deleted from server:', oldImagePath);
         } catch (error) {
           console.error('Error deleting old image file:', error);
           throw error;
