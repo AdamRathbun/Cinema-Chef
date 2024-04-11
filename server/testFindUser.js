@@ -5,7 +5,6 @@ const testFindUserByUsername = async () => {
 
   try {
     const foundUser = await userModel.findUserByUsername(usernameToFind);
-    console.log('User found:', foundUser);
   } catch (error) {
     console.error('Error finding user:', error.message);
   } finally {

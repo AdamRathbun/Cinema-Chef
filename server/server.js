@@ -54,7 +54,7 @@ app.get('/recipes', async (req, res) => {
 app.get('/top-liked-recipes', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM recipes ORDER BY likes DESC LIMIT 30'
+      'SELECT * FROM recipes ORDER BY likes DESC LIMIT 100'
     );
 
     const topLikedRecipes = result.rows;
