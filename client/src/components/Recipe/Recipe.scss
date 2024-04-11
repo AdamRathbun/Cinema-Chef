@@ -40,7 +40,7 @@
 }
 
 .description {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .title {
@@ -61,7 +61,7 @@
   flex-direction: row;
   padding: 0 10px;
   width: 900px;
-  margin-top: 20px;
+  margin-top: 30px;
 
   p,
   div {
@@ -79,6 +79,10 @@
   }
 }
 
+.movie-info-container {
+  margin-top: 15px;
+}
+
 .likes-and-dislikes-container {
   display: flex;
   flex-direction: row;
@@ -87,6 +91,26 @@
   @include phone {
     margin-top: 14px;
     justify-content: flex-start;
+    margin-bottom: 30px;
+  }
+}
+
+.like-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  button {
+    padding: 8px 16px;
+    background-color: #B8A99A;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color .1s ease;
+    height: 30px;
+    width: 80px;
+    margin-top: 5px;
   }
 }
 
@@ -94,17 +118,14 @@
 .dislikes {
   display: flex;
   flex-direction: row;
-  margin-bottom: 20px;
   padding-right: 10px;
-
-  button {
-    margin-left: 10px;
-  }
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .button {
   padding: 8px 16px;
-  background-color: #FFA500;
+  background-color: #B8A99A;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -112,6 +133,21 @@
   transition: background-color .1s ease;
   height: 30px;
   width: 80px;
+}
+
+.save-or-delete {
+  button {
+    padding: 8px 16px;
+    background-color: #B8A99A;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color .1s ease;
+    height: 30px;
+    width: 150px;
+    margin-bottom: 15px;
+  }
 }
 
 .movie-container {
@@ -166,8 +202,7 @@
 }
 
 .dietary-restriction,
-.movie-genre,
-.button {
+.movie-genre {
   @include phone {
     margin-top: 30px;
   }

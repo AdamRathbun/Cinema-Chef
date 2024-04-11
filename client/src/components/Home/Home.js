@@ -61,8 +61,6 @@ function Home() {
 
   const likedRecipesWithImages = likedRecipes.filter(recipe => recipe.image);
 
-  console.log(likedRecipesWithImages)
-
   return (
     <div className='home'>
       <h1>Explore culinary creations based on cinematic masterpieces</h1>

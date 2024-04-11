@@ -195,7 +195,7 @@ function Recipe() {
             )}
           </h2>
           <div className='top-container'>
-            <div>
+            <div className='save-or-delete'>
               {!isAuthenticated && (
                 <div>
                   Sign in to save recipe
@@ -215,16 +215,20 @@ function Recipe() {
               )}
             </div>
             <div className='likes-and-dislikes-container'>
-              <div className='likes'>
-                <strong>Likes:</strong>
-                {recipe.likes}
+              <div className='like-container'>
+                <div className='likes'>
+                  <strong>Likes:</strong>
+                  &nbsp;{recipe.likes}
+                </div>
                 {isAuthenticated && !isUserOwner && (
                   <LikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
                 )}
               </div>
-              <div className='dislikes'>
-                <strong>Dislikes:</strong>
-                {recipe.dislikes}
+              <div className='like-container'>
+                <div className='dislikes'>
+                  <strong>Dislikes:</strong>
+                  &nbsp;{recipe.dislikes}
+                </div>
                 {isAuthenticated && !isUserOwner && (
                   <DislikeRecipe recipeId={id} userId={user} authToken={authToken} onLike={handleRecipeUpdate} />
                 )}
@@ -349,7 +353,7 @@ function Recipe() {
             {showMovieInfo && movieInfo && (
               <>
                 <p>{movieInfo.overview}</p>
-                {/* <p><strong>Released</strong> {movieInfo.release_date}</p> */}
+                <p><strong>Released:</strong> {(movieInfo.release_date).slice(0, 4)}</p>
               </>
             )}
           </div>
