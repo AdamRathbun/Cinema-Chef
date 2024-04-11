@@ -75,13 +75,12 @@
   }
 }
 
-.grid-unit {
+.grid-unit--your {
   width: 320px;
-  height: 340px;
+  height: 300px;
 
   h3 {
     height: 50px;
-    display: block;
     margin-top: 5px;
     white-space: normal;
     overflow: hidden;

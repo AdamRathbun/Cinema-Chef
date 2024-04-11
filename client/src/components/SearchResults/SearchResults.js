@@ -57,36 +57,12 @@ const SearchResults = () => {
   const currentRecipes = searchResults.slice(indexOfFirstRecipe, indexOfLastRecipe);
 
   function truncateTitle(text) {
-    const max = 48
+    const max = 66
     if (text.length > max) {
       return text.substring(0, max) + '...'
     }
     return text
   }
-
-  //   return (
-  //     <div>
-  //       <h2>Search Results</h2>
-  //       {searchResults.length === 0 ? (
-  //         <h3>No recipes matching that search</h3>
-  //       ) : (
-  //         <ul>
-  //           {searchResults.map((recipe) => (
-  //             <li key={recipe.recipe_id}>
-  //               <Link to={`/recipes/${recipe.recipe_id}`}>
-  //                 <h3>{recipe.title}</h3>
-  //                 <p>{recipe.movie_title}</p>
-  //                 {recipe.image && <img src={recipe.image} alt={recipe.title} />}
-  //               </Link>
-  //             </li>
-  //           ))}
-  //         </ul>
-  //       )}
-  //     </div>
-  //   );
-  // };
-
-  console.log(searchResults)
 
   return (
     <div className='overall'>

@@ -39,7 +39,7 @@ const SearchBarResults = () => {
   const currentRecipes = searchResults.slice(indexOfFirstRecipe, indexOfLastRecipe);
 
   function truncateTitle(text) {
-    const max = 48
+    const max = 66
     if (text.length > max) {
       return text.substring(0, max) + '...'
     }

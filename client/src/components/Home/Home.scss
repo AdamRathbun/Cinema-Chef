@@ -40,6 +40,8 @@
 .search-section {
   display: flex;
   flex-direction: row;
+  margin-top: 20px;
+  margin-bottom: 20px;
 
   @include tablet {
     margin-top: 30px;
@@ -50,10 +52,10 @@
   }
 
   @include phone {
-    margin-top: 10px;
+    margin-top: 12px;
     width: 340px;
     flex-direction: column;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
   }
 }
 
@@ -127,6 +129,7 @@
 
     @include phone {
       font-size: 20px;
+      margin-bottom: 20px;
     }
   }
 
@@ -138,7 +141,7 @@
 
   @include phone {
     width: 320px;
-    height: 450px;
+    margin-bottom: 2px;
   }
 }
 
@@ -150,12 +153,6 @@
     max-height: 300px;
     object-fit: cover;
   }
-}
-
-.highlighted-recipe {
-  width: 100%;
-
-  @include tablet {}
 }
 
 .highlighted-recipes {
@@ -186,6 +183,10 @@
   }
 }
 
+.highlighted-recipe {
+  width: 100%;
+}
+
 .highlighted-recipe__content {
   display: flex;
   flex-direction: row;
@@ -193,6 +194,7 @@
 
   @include tablet {
     justify-content: flex-start;
+    align-items: flex-start;
     margin-left: 30px;
   }
 
@@ -208,7 +210,6 @@
     @include tablet {
       width: 380px;
       margin-right: 0;
-
     }
 
     @include phone {
@@ -235,7 +236,7 @@ h3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   li {
     list-style: none;
@@ -281,8 +282,15 @@ h3 {
   }
 
   @include phone {
-    height: 330px;
+    height: 310px;
   }
+}
+
+.h3--short {
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .band {
@@ -318,4 +326,5 @@ h3 {
 .drink {
   background-color: #C3FCF2;
   color: #00362F;
+  margin-top: 10px;
 }

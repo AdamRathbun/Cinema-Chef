@@ -35,7 +35,7 @@ function Home() {
   };
 
   function truncate(text) {
-    const max = 150
+    const max = 155
     if (text.length > max) {
       return text.substring(0, max) + '...'
     }
@@ -43,7 +43,15 @@ function Home() {
   }
 
   function truncateTitle(text) {
-    const max = 48
+    const max = 38
+    if (text.length > max) {
+      return text.substring(0, max) + '...'
+    }
+    return text
+  }
+
+  function truncateTitleShort(text) {
+    const max = 34
     if (text.length > max) {
       return text.substring(0, max) + '...'
     }
@@ -57,7 +65,6 @@ function Home() {
     }
     return text
   }
-
 
   const likedRecipesWithImages = likedRecipes.filter(recipe => recipe.image);
 
@@ -82,6 +89,7 @@ function Home() {
             </div>
           )}
         </div>
+
         <div className="highlighted-section">
           <div className="highlighted-recipes">
             <h2>Hot Recipes</h2>
@@ -128,7 +136,7 @@ function Home() {
             <div className='grid-unit' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <img className='image' src={recipe.image} alt={recipe.title} />
-                <h3>{truncateTitle(recipe.title)}</h3>
+                <h3>{truncateTitleShort(recipe.title)}</h3>
                 <p>Likes: {recipe.likes}</p>
               </Link>
             </div>
@@ -147,7 +155,7 @@ function Home() {
             <div className='grid-unit' key={recipe.recipe_id}>
               <Link to={`/recipes/${recipe.recipe_id}`}>
                 <img className='image' src={recipe.image} alt={recipe.title} />
-                <h3>{truncateTitle(recipe.title)}</h3>
+                <h3 id='h3--short'>{truncateTitleShort(recipe.title)}</h3>
                 <p>Likes: {recipe.likes}</p>
               </Link>
             </div>

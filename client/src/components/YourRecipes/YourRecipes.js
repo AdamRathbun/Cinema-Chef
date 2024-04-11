@@ -41,7 +41,7 @@ const YourRecipes = () => {
   const currentRecipes = userRecipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
 
   function truncateTitle(text) {
-    const max = 48
+    const max = 56
     if (text.length > max) {
       return text.substring(0, max) + '...'
     }
@@ -55,7 +55,7 @@ const YourRecipes = () => {
         <div>
           <div className='grid'>
             {currentRecipes.map((recipe) => (
-              <div className='grid-unit' key={recipe.recipe_id}>
+              <div className='grid-unit--your' key={recipe.recipe_id}>
                 <Link to={`/recipes/${recipe.recipe_id}`}>
                   <h3>{truncateTitle(recipe.title)}</h3>
                   {recipe.image ? (
