@@ -61,7 +61,7 @@ const SearchBarResults = () => {
                   {recipe.image ? (
                     <img src={recipe.image} alt={recipe.title} />
                   ) : (
-                    <img id='image--default' src={defaultImage} />
+                    <img id='image--default' src={defaultImage} alt='N/A' />
                   )}
                   <p>Meal Type: {recipe.meal_type}</p>
                   {recipe.dietary_restriction === 'gluten_free' ? (
