@@ -15,7 +15,7 @@ const port = 5000;
 app.use(express.json());
 app.use(cors())
 
-// need to update later
+// need to update with image hosting url later
 app.use('/upload-image', express.static(path.join(__dirname, 'upload-image')));
 
 const pool = new Pool({

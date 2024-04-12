@@ -51,7 +51,8 @@
 }
 
 .auth-button {
-  width: 80px;
+  width: 82px;
+  height: 27px;
   padding: 1.5px 16px;
   color: #fff;
   border: none;
@@ -65,10 +66,6 @@
   &:hover {
     background-color: #FF8C00;
     cursor: pointer;
-  }
-
-  @include phone {
-    width: 82px;
   }
 }
 
