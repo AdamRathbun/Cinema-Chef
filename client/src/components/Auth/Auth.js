@@ -74,7 +74,7 @@ const AuthComponent = () => {
     <div className="auth-container">
       {user ? (
         <div className='auth__welcome-message'>
-          <p>Welcome, {user.username}!</p>
+          <p>Welcome, {user.username}</p>
           <button className='auth-button' onClick={handleLogout}>Logout</button>
         </div>
       ) : (

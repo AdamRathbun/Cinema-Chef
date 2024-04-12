@@ -61,7 +61,7 @@ function SavedRecipes() {
                   {recipe.image ? (
                     <img src={recipe.image} alt={recipe.title} />
                   ) : (
-                    <img id='image--default' src={defaultImage} alt='No recipe image.' />
+                    <img id='image--default' src={defaultImage} />
                   )
                   }
                   <p>Meal Type: {recipe.meal_type}</p>

@@ -14,7 +14,7 @@ function SaveRecipe({ recipeId, userId, authToken }) {
     setIsSaving(true);
 
     try {
-      const response = await axios.post(
+      await axios.post(
         // *need to update later with hosting
         'http://localhost:5000/save-recipe',
         { user_id: userId, recipe_id: recipeId },
@@ -26,7 +26,7 @@ function SaveRecipe({ recipeId, userId, authToken }) {
         }
       );
 
-      setMessage('Recipe saved!')
+      setMessage('Recipe saved!');
     } catch (error) {
       console.error('Error saving recipe:', error);
     } finally {

@@ -20,8 +20,7 @@ const SearchBar = () => {
       }
 
       // *need to update later with hosting
-      const response = await axios.get(`http://localhost:5000/recipes/search/recipe-name/${query}`);
-      const searchResults = response.data;
+      await axios.get(`http://localhost:5000/recipes/search/recipe-name/${query}`);
 
       navigate(`/search/recipe-name/${query}`);
       setQuery('');

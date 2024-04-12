@@ -27,7 +27,6 @@ function Home() {
     try {
       const modifiedTag = searchType === 'movie-genre' && tag === 'sci-fi' ? 'sci_fi' : tag;
 
-      const response = await axios.get(`http://localhost:5000/recipes/${searchType}/${modifiedTag}`);
       navigate(`/search/${searchType}/${modifiedTag}`)
     } catch (error) {
       console.error(`Error fetching recipes with ${searchType}:`, error);

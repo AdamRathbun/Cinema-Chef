@@ -61,7 +61,7 @@ const YourRecipes = () => {
                   {recipe.image ? (
                     <img src={recipe.image} alt={recipe.title} />
                   ) : (
-                    <img id='image--default' src={defaultImage} alt='No recipe image.' />
+                    <img id='image--default' src={defaultImage} />
                   )
                   }
                 </Link>

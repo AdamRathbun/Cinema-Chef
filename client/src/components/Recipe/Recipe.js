@@ -381,9 +381,9 @@ function Recipe() {
           <PinterestShareButton url={recipeUrl} description={recipe.title} media={pinterestIcon}>
             <img className='social-icon' src={pinterestIcon} alt='Pinterest' />
           </PinterestShareButton>
-          <a href='#' onClick={() => window.print()}>
+          <div onClick={() => window.print()} role="button" tabIndex={0}>
             <img className='social-icon' src={printerIcon} alt='Print' />
-          </a>
+          </div>
         </div>
       )}
     </div>
