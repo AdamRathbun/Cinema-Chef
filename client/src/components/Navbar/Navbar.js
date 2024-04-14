@@ -24,7 +24,7 @@ function Navbar() {
           <img src={menuIcon} alt="Menu" />
         </div>
         <h2 className='logo'>
-          <Link to="/" className='navbar__link'>CinemaChef</Link>
+          <Link to="/" className='navbar__link'>Cinema Chef</Link>
         </h2>
       </div>
       {isMenuOpen && <div className="overlay" onClick={handleMenuToggle} />}

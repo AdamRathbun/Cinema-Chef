@@ -12,7 +12,7 @@ const Footer = () => {
           <a href='/add-recipe'>Add a recipe</a>
         </div>
         <div className='rights'>
-          <p>&copy; 2024 CinemaChef. All rights reserved.</p>
+          <p>&copy; 2024 Cinema Chef. All rights reserved.</p>
           <p>Designed and developed by Adam Rathbun.</p>
         </div>
       </div>
