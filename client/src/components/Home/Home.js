@@ -161,6 +161,25 @@ function Home() {
           ))}
       </div>
 
+      <div className='band dinner'>
+        <h5>Winner Winner Kitchen Dinner</h5>
+      </div>
+
+      <div className='grid'>
+        {likedRecipesWithImages
+          .filter(recipe => recipe.meal_type === 'dinner')
+          .slice(0, 6)
+          .map((recipe) => (
+            <div className='grid-unit' key={recipe.recipe_id}>
+              <Link to={`/recipes/${recipe.recipe_id}`}>
+                <img className='image' src={recipe.image} alt={recipe.title} />
+                <h3 id='h3--short'>{truncateTitleShort(recipe.title)}</h3>
+                <p>Likes: {recipe.likes}</p>
+              </Link>
+            </div>
+          ))}
+      </div>
+
     </div>
   );
 }
