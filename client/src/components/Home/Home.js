@@ -162,7 +162,7 @@ function Home() {
       </div>
 
       <div className='band dinner'>
-        <h5>Winner Winner Kitchen Dinner</h5>
+        <h5>Winner Winner Simple Dinner</h5>
       </div>
 
       <div className='grid'>
