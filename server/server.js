@@ -2,21 +2,22 @@ const express = require('express');
 const { Pool } = require('pg');
 const config = require('./config');
 const cors = require('cors')
-const multer = require('multer');
 const path = require('path');
 const fs = require('fs').promises;
 const authController = require('./controllers/authController');
 const { authenticateToken } = require('./middleware/authMiddleware');
 const movieController = require('./controllers/movieController');
+const multer = require('multer');
+
+const cloudinary = require('cloudinary').v2;
+const { cloudinaryConfig } = require('./config');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const port = 5000;
 
 app.use(express.json());
 app.use(cors())
-
-// need to update with image hosting url later
-app.use('/upload-image', express.static(path.join(__dirname, 'upload-image')));
 
 const pool = new Pool({
   user: config.postgresUser,
@@ -26,19 +27,23 @@ const pool = new Pool({
   port: config.postgresPort,
 });
 
-// need to update storage location later
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'upload-image/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const extension = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + extension);
-  },
+cloudinary.config({
+  cloud_name: cloudinaryConfig.cloud_name,
+  api_key: cloudinaryConfig.api_key,
+  api_secret: cloudinaryConfig.api_secret,
+  secure: true,
 });
 
-const upload = multer({ storage });
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'holding',
+    allowedFormats: ['jpg', 'jpeg', 'png'],
+    transformation: [{ width: 2700, crop: 'scale' }],
+  }
+});
+
+const upload = multer({ storage: storage });
 
 app.get('/recipes', async (req, res) => {
   try {
@@ -152,16 +157,15 @@ app.get('/recipes/search/recipe-name/:searchTerm', async (req, res) => {
   }
 });
 
-// *need to update later with image hosting url
 app.post('/upload-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No image uploaded.' });
     }
 
-    const filename = req.file.filename;
+    const result = await cloudinary.uploader.upload(req.file.path);
 
-    const imageUrl = `http://localhost:5000/upload-image/${filename}`;
+    const imageUrl = result.secure_url;
 
     res.json({ imageUrl });
   } catch (error) {
@@ -450,14 +454,19 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
     if (req.file && req.body.field === 'image') {
       const oldImageUrl = existingRecipe.image;
       if (oldImageUrl) {
-        const oldImagePath = path.join(__dirname, 'upload-image', path.basename(oldImageUrl));
-        try {
-          await fs.unlink(oldImagePath);
-        } catch (error) {
-          console.error('Error deleting old image file:', error);
-          throw error;
-        }
+        const publicId = oldImageUrl.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
       }
+
+      const result = await cloudinary.uploader.upload(req.file.path);
+      const newImageUrl = result.secure_url;
+      const updateQuery = 'UPDATE recipes SET image = $1 WHERE recipe_id = $2 RETURNING *';
+      const updateResult = await pool.query(updateQuery, [newImageUrl, id]);
+      const updatedRecipe = updateResult.rows[0];
+
+      await cloudinary.api.delete_resources_by_prefix('holding/');
+
+      return res.json(updatedRecipe);
     }
 
     const fieldToColumnMap = {
@@ -479,20 +488,6 @@ app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, r
     if (!column) {
       console.error(`Error updating the recipe: Unknown field - ${field}`);
       return res.status(400).send('Unknown field');
-    }
-
-    if (field === 'image' && req.file) {
-      const newImageFilename = req.file.filename;
-      // *update later with image hosting url
-      const newImageUrl = `http://localhost:5000/upload-image/${newImageFilename}`;
-
-      const updateQuery = `UPDATE recipes SET ${column} = $1 WHERE recipe_id = $2 RETURNING *`;
-      const queryParams = [newImageUrl, id];
-
-      const updateResult = await pool.query(updateQuery, queryParams);
-      const updatedRecipe = updateResult.rows[0];
-
-      return res.json(updatedRecipe);
     }
 
     const updateQuery = `UPDATE recipes SET ${column} = $1 WHERE recipe_id = $2 RETURNING *`;
@@ -529,15 +524,15 @@ app.delete('/recipes/:id', authenticateToken, async (req, res) => {
 
     const imageUrl = deletedRecipe.image;
 
-    // *Need to update later with image hosting: Deletes the image from the server
     if (imageUrl) {
-      const imagePath = path.join(__dirname, 'upload-image', path.basename(imageUrl));
+      const publicId = imageUrl.split('/').pop().split('.')[0];
 
-      await fs.unlink(imagePath);
-      console.log('Image file deleted from server:', imagePath);
+      await cloudinary.uploader.destroy(publicId).then(result => console.log(result));
     } else {
       console.log('Recipe has no image to delete.');
     }
+
+    await cloudinary.api.delete_resources_by_prefix('holding/');
 
     res.json(deletedRecipe);
   } catch (err) {
