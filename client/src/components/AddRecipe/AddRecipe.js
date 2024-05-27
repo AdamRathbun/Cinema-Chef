@@ -18,8 +18,8 @@ function AddRecipe() {
   });
 
   const navigate = useNavigate();
-
   const [message, setMessage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const authToken = localStorage.getItem('authToken');
 
   const handleChange = (e) => {
@@ -40,6 +40,7 @@ function AddRecipe() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const form = new FormData();
@@ -84,10 +85,12 @@ function AddRecipe() {
       }
 
       setMessage('Recipe added!');
-      navigate('/')
+      navigate('/');
     } catch (error) {
       console.error('Error uploading data:', error);
       setMessage('There was an issue creating this recipe.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -200,7 +203,9 @@ function AddRecipe() {
           <label>Image</label>
           <input type='file' name='image' onChange={handleImageChange} />
         </div>
-        <button className='button--submit' type='submit'>Submit</button>
+        <button className='button--submit' type='submit' disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit'}
+        </button>
       </form>
       {message && <div>{message}</div>}
     </div>

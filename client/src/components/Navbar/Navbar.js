@@ -1,21 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import AuthComponent from '../Auth/Auth';
 import SearchBar from '../SearchBar/SearchBar';
 import './Navbar.scss';
 import menuIcon from '../../assets/bars.png';
+import { createClient } from '@supabase/supabase-js';
+
+import { useNavigate } from 'react-router-dom';
+
+const supabase = createClient('https://bwzptqnuytalrgtwhhim.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3enB0cW51eXRhbHJndHdoaGltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM0NzIyMzEsImV4cCI6MjAyOTA0ODIzMX0.Lxr25RL-sNfN4_Xv8_Td3mjmMzTVtm4r6r4rerQVnhc')
 
 function Navbar() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getUserEmail = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (data) {
+          const userEmail = data.session.user.email;
+          setUserEmail(userEmail.split('@')[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching user session:', error.message);
+      }
+    };
+
+    getUserEmail();
+  }, [userEmail, navigate]);
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const handleMenuClick = () => {
-    setIsMenuOpen(false)
-  }
+    setIsMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUserEmail(null);
+    } catch (error) {
+      console.error('Error signing out:', error.message);
+    }
+  };
 
   return (
     <nav className='navbar'>
@@ -42,9 +74,16 @@ function Navbar() {
           <li className={`navbar__item ${location.pathname === '/add-recipe' ? 'active' : ''}`} onClick={handleMenuClick}>
             <Link to="/add-recipe" className='navbar__link'>Add a recipe</Link>
           </li>
-          <div className='navbar__login'>
-            <AuthComponent />
-          </div>
+          {userEmail ? (
+            <li className={`navbar__item top-spacing`} onClick={handleMenuClick}>
+              <span>Welcome, {userEmail}</span>
+              <button className='logout-button' onClick={handleLogout}>Logout</button>
+            </li>
+          ) : (
+            <li className={`navbar__item ${location.pathname === '/login' ? 'active' : ''}`} onClick={handleMenuClick}>
+              <Link to="/login" className='navbar__link left'>Login</Link>
+            </li>
+          )}
         </ul>
       )}
       <ul className='navbar__list'>
@@ -64,7 +103,16 @@ function Navbar() {
       <div className='navbar--right'>
         <SearchBar />
         <div className='navbar__login'>
-          <AuthComponent />
+          {userEmail ? (
+            <div className='navbar__item' onClick={handleMenuClick}>
+              <span>Welcome, {userEmail}</span>
+              <button className='logout-button' onClick={handleLogout}>Logout</button>
+            </div>
+          ) : (
+            <div className={`navbar__item ${location.pathname === '/login' ? 'active' : ''}`} onClick={handleMenuClick}>
+              <Link to="/login" className='navbar__link left'>Login</Link>
+            </div>
+          )}
         </div>
       </div>
     </nav>

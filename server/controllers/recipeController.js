@@ -1,13 +1,20 @@
-const pool = require('./server').pool;
-const authMiddleware = require('../middleware/authMiddleware');
+const { createClient } = require('@supabase/supabase-js');
+const config = require('../config');
+
+const supabase = createClient(config.supabaseURL, config.supabaseKey);
 
 const getAllRecipes = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM recipes');
-    const recipes = result.rows;
+    const { data: recipes, error } = await supabase.from('recipes').select('*');
+
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error fetching recipes');
+    }
+
     res.json(recipes);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Error fetching recipes');
   }
 };
@@ -16,17 +23,24 @@ const getRecipeById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query('SELECT * FROM recipes WHERE recipe_id = $1', [id]);
+    const { data: recipe, error } = await supabase
+      .from('recipes')
+      .select('*')
+      .eq('recipe_id', id)
+      .single();
 
-    if (result.rows.length === 0) {
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error fetching recipe by ID');
+    }
+
+    if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found' });
     }
 
-    const recipe = result.rows[0];
-
     res.json(recipe);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Error fetching recipe by ID');
   }
 };
@@ -35,12 +49,16 @@ const getUserRecipes = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const result = await pool.query('SELECT * FROM recipes WHERE user_id = $1', [userId]);
-    const userRecipes = result.rows;
+    const { data: userRecipes, error } = await supabase.from('recipes').select('*').eq('user_id', userId);
+
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error fetching user-specific recipes');
+    }
 
     res.json(userRecipes);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Error fetching user-specific recipes');
   }
 };
@@ -49,8 +67,15 @@ const searchByMealType = async (req, res) => {
   const { mealType } = req.params;
 
   try {
-    const result = await pool.query('SELECT * FROM recipes WHERE meal_type = $1', [mealType]);
-    const recipes = result.rows;
+    const { data: recipes, error } = await supabase
+      .from('recipes')
+      .select('*')
+      .eq('meal_type', mealType);
+
+    if (error) {
+      console.error('Error searching recipes by meal type:', error);
+      return res.status(500).json({ error: 'An error occurred while searching recipes by meal type' });
+    }
 
     res.json(recipes);
   } catch (error) {
@@ -63,8 +88,15 @@ const searchByDietaryRestriction = async (req, res) => {
   const { dietaryRestriction } = req.params;
 
   try {
-    const result = await pool.query('SELECT * FROM recipes WHERE dietary_restriction = $1', [dietaryRestriction]);
-    const recipes = result.rows;
+    const { data: recipes, error } = await supabase
+      .from('recipes')
+      .select('*')
+      .eq('dietary_restriction', dietaryRestriction);
+
+    if (error) {
+      console.error('Error searching recipes by dietary restriction:', error);
+      return res.status(500).json({ error: 'An error occurred while searching recipes by dietary restriction' });
+    }
 
     res.json(recipes);
   } catch (error) {
@@ -77,8 +109,15 @@ const searchByMovieGenre = async (req, res) => {
   const { movieGenre } = req.params;
 
   try {
-    const result = await pool.query('SELECT * FROM recipes WHERE movie_genre = $1', [movieGenre]);
-    const recipes = result.rows;
+    const { data: recipes, error } = await supabase
+      .from('recipes')
+      .select('*')
+      .eq('movie_genre', movieGenre);
+
+    if (error) {
+      console.error('Error searching recipes by movie genre:', error);
+      return res.status(500).json({ error: 'An error occurred while searching recipes by movie genre' });
+    }
 
     res.json(recipes);
   } catch (error) {
@@ -91,10 +130,16 @@ const searchRecipes = async (req, res) => {
   const { searchTerm } = req.params;
 
   try {
-    let result;
-    result = await pool.query('SELECT * FROM recipes WHERE LOWER(title) LIKE $1', [`%${searchTerm.toLowerCase()}%`]);
+    const { data: recipes, error } = await supabase
+      .from('recipes')
+      .select('*')
+      .ilike('title', `%${searchTerm.toLowerCase()}%`);
 
-    const recipes = result.rows;
+    if (error) {
+      console.error('Error searching recipes:', error);
+      return res.status(500).json({ error: 'An error occurred while searching recipes' });
+    }
+
     res.json(recipes);
   } catch (error) {
     console.error('Error searching recipes:', error);
@@ -104,15 +149,20 @@ const searchRecipes = async (req, res) => {
 
 const addRecipeWithoutImage = async (req, res) => {
   const { title, ingredients, instructions, movie_title } = req.body;
+
   try {
-    const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title) VALUES ($1, $2, $3, $4) RETURNING *',
-      [title, ingredients, instructions, movie_title]
-    );
-    const newRecipe = result.rows[0];
-    res.status(201).json(newRecipe);
-  } catch (err) {
-    console.error(err);
+    const { data: newRecipe, error } = await supabase
+      .from('recipes')
+      .insert([{ title, ingredients, instructions, movie_title }]);
+
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error creating a new recipe without image');
+    }
+
+    res.status(201).json(newRecipe[0]);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Error creating a new recipe without image');
   }
 };
@@ -121,14 +171,18 @@ const addRecipeWithImage = async (req, res) => {
   const { title, ingredients, instructions, movie_title, imageUrl } = req.body;
 
   try {
-    const result = await pool.query(
-      'INSERT INTO recipes (title, ingredients, instructions, movie_title, image) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [title, ingredients, instructions, movie_title, imageUrl]
-    );
-    const newRecipe = result.rows[0];
-    res.status(201).json(newRecipe);
-  } catch (err) {
-    console.error(err);
+    const { data: newRecipe, error } = await supabase
+      .from('recipes')
+      .insert([{ title, ingredients, instructions, movie_title, image: imageUrl }]);
+
+    if (error) {
+      console.error(error);
+      return res.status(500).send('Error creating a new recipe with image');
+    }
+
+    res.status(201).json(newRecipe[0]);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Error creating a new recipe with image');
   }
 };
@@ -139,14 +193,24 @@ const uploadImage = async (req, res) => {
       return res.status(400).json({ message: 'No image uploaded.' });
     }
 
-    const filename = req.file.filename;
-    const image = `http://localhost:5000/upload-image/${filename}`;
+    const result = await cloudinary.uploader.upload(req.file.path);
+    const imageUrl = result.secure_url;
 
     const recipe_id = req.body.recipe_id;
-    const updateQuery = 'UPDATE recipes SET image = $1 WHERE recipe_id = $2';
-    await pool.query(updateQuery, [image, recipe_id]);
 
-    res.json({ image });
+    // Update the recipe in Supabase with the image URL
+    const { data: updatedRecipe, error: updateError } = await supabase
+      .from('recipes')
+      .update({ image: imageUrl })
+      .eq('recipe_id', recipe_id)
+      .single();
+
+    if (updateError) {
+      console.error('Error updating recipe with new image:', updateError.message);
+      return res.status(500).send('Error updating recipe with new image');
+    }
+
+    res.json({ image: imageUrl });
   } catch (error) {
     console.error('Error uploading image:', error);
     res.status(500).json({ error: 'Server error' });
@@ -158,24 +222,49 @@ const updateRecipe = async (req, res) => {
   const { field, value } = req.body;
 
   try {
-    let updateQuery = `UPDATE recipes SET ${field} = $1 WHERE recipe_id = $2 RETURNING *`;
-    const queryParams = [value, id];
+    if (req.file && field === 'image') {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      const newImageUrl = result.secure_url;
 
-    if (field === 'image' && req.file) {
-      const newImageFilename = req.file.filename;
-      // *update later with image hosting url
-      const newImageUrl = `http://localhost:5000/upload-image/${newImageFilename}`;
+      const existingRecipeResult = await supabase
+        .from('recipes')
+        .select('image')
+        .eq('recipe_id', id)
+        .single();
+      const existingRecipe = existingRecipeResult.data;
+      if (existingRecipe.image) {
+        const publicId = existingRecipe.image.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
 
-      updateQuery = `UPDATE recipes SET image = $1 WHERE recipe_id = $2 RETURNING *`;
-      queryParams[0] = newImageUrl;
+      const { data: updatedRecipe, error: updateError } = await supabase
+        .from('recipes')
+        .update({ image: newImageUrl })
+        .eq('recipe_id', id)
+        .single();
+
+      if (updateError) {
+        console.error('Error updating recipe with new image:', updateError.message);
+        return res.status(500).send('Error updating recipe with new image');
+      }
+
+      return res.json(updatedRecipe);
     }
 
-    const updateResult = await pool.query(updateQuery, queryParams);
-    const updatedRecipe = updateResult.rows[0];
+    const { data: updatedRecipe, error: updateError } = await supabase
+      .from('recipes')
+      .update({ [field]: value })
+      .eq('recipe_id', id)
+      .single();
+
+    if (updateError) {
+      console.error('Error updating recipe:', updateError.message);
+      return res.status(500).send('Error updating recipe');
+    }
 
     res.json(updatedRecipe);
   } catch (err) {
-    console.error('Error updating the recipe:', err);
+    console.error('Error updating the recipe:', err.message);
     res.status(500).send('Error updating the recipe');
   }
 };
@@ -183,11 +272,20 @@ const updateRecipe = async (req, res) => {
 const deleteRecipe = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM recipes WHERE recipe_id = $1 RETURNING *', [id]);
-    const deletedRecipe = result.rows[0];
+    const { data: deletedRecipe, error: deleteError } = await supabase
+      .from('recipes')
+      .delete()
+      .eq('recipe_id', id)
+      .single();
+
+    if (deleteError) {
+      console.error('Error deleting the recipe:', deleteError.message);
+      return res.status(500).send('Error deleting the recipe');
+    }
+
     res.json(deletedRecipe);
   } catch (err) {
-    console.error(err);
+    console.error('Error deleting the recipe:', err.message);
     res.status(500).send('Error deleting the recipe');
   }
 };
@@ -197,33 +295,52 @@ const saveRecipe = async (req, res) => {
   const { recipeId } = req.body;
 
   try {
-    const existingSavedRecipe = await pool.query(
-      'SELECT * FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2',
-      [userId, recipeId]
-    );
+    const { data: existingSavedRecipe, error: savedRecipeError } = await supabase
+      .from('saved_recipes')
+      .select()
+      .eq('user_id', userId)
+      .eq('recipe_id', recipeId)
+      .single();
 
-    if (existingSavedRecipe.rows.length > 0) {
+    if (existingSavedRecipe) {
       return res.status(400).send('Recipe already saved by the user');
     }
 
-    await pool.query('INSERT INTO saved_recipes (user_id, recipe_id) VALUES ($1, $2)', [userId, recipeId]);
+    const { error: insertError } = await supabase
+      .from('saved_recipes')
+      .insert([{ user_id: userId, recipe_id: recipeId }]);
+
+    if (insertError) {
+      console.error('Error saving recipe:', insertError.message);
+      return res.status(500).send('Error saving recipe');
+    }
+
     res.status(201).send('Recipe saved successfully');
   } catch (err) {
-    console.error(err);
+    console.error('Error saving recipe:', err.message);
     res.status(500).send('Error saving recipe');
   }
 };
-
 
 const unsaveRecipe = async (req, res) => {
   const userId = req.user.id;
   const { recipeId } = req.body;
 
   try {
-    await pool.query('DELETE FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2', [userId, recipeId]);
+    const { error: deleteError } = await supabase
+      .from('saved_recipes')
+      .delete()
+      .eq('user_id', userId)
+      .eq('recipe_id', recipeId);
+
+    if (deleteError) {
+      console.error('Error unsaving recipe:', deleteError.message);
+      return res.status(500).send('Error unsaving recipe');
+    }
+
     res.status(200).send('Recipe unsaved successfully');
   } catch (err) {
-    console.error(err);
+    console.error('Error unsaving recipe:', err.message);
     res.status(500).send('Error unsaving recipe');
   }
 };
@@ -232,37 +349,41 @@ const getSavedRecipes = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const query = {
-      text: `
-        SELECT recipes.*
-        FROM recipes
-        JOIN saved_recipes ON recipes.recipe_id = saved_recipes.recipe_id
-        WHERE saved_recipes.user_id = $1
-      `,
-      values: [userId],
-    };
-    const result = await pool.query(query);
-    const savedRecipes = result.rows;
+    const { data: savedRecipes, error: fetchError } = await supabase
+      .from('recipes')
+      .select()
+      .eq('user_id', userId)
+      .join('saved_recipes', { type: 'inner', 'recipes.recipe_id': 'saved_recipes.recipe_id' });
+
+    if (fetchError) {
+      console.error('Error fetching saved recipes:', fetchError.message);
+      return res.status(500).json({ error: 'An error occurred while fetching saved recipes' });
+    }
 
     res.json(savedRecipes);
-  } catch (error) {
-    console.error('Error fetching saved recipes:', error);
+  } catch (err) {
+    console.error('Error fetching saved recipes:', err.message);
     res.status(500).json({ error: 'An error occurred while fetching saved recipes' });
   }
 };
-
 const checkSavedRecipe = async (req, res) => {
   const { user_id, recipe_id } = req.query;
 
   try {
-    const savedRecipe = await pool.query(
-      'SELECT * FROM saved_recipes WHERE user_id = $1 AND recipe_id = $2',
-      [user_id, recipe_id]
-    );
+    const { data: savedRecipes, error: fetchError } = await supabase
+      .from('saved_recipes')
+      .select()
+      .eq('user_id', user_id)
+      .eq('recipe_id', recipe_id);
 
-    res.status(200).json({ saved: savedRecipe.rows.length > 0 });
+    if (fetchError) {
+      console.error('Error checking saved recipe:', fetchError.message);
+      return res.status(500).json({ error: 'Error checking saved recipe' });
+    }
+
+    res.status(200).json({ saved: savedRecipes.length > 0 });
   } catch (error) {
-    console.error('Error checking saved recipe:', error);
+    console.error('Error checking saved recipe:', error.message);
     res.status(500).json({ error: 'Error checking saved recipe' });
   }
 };
@@ -271,28 +392,28 @@ const likeRecipe = async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
   try {
-    const existingLike = await pool.query(
-      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
-      [user_id, recipe_id, 'like']
-    );
+    const { data: existingLike, error: fetchError } = await supabase
+      .from('recipe_likes')
+      .select()
+      .eq('user_id', user_id)
+      .eq('recipe_id', recipe_id)
+      .eq('interaction_type', 'like');
 
-    if (existingLike.rows.length > 0) {
+    if (fetchError) {
+      console.error('Error liking recipe:', fetchError.message);
+      return res.status(500).json({ error: 'Error liking recipe' });
+    }
+
+    if (existingLike.length > 0) {
       return res.status(400).json({ error: 'User has already liked this recipe' });
     }
 
-    await pool.query(
-      'INSERT INTO recipe_likes (user_id, recipe_id, interaction_type) VALUES ($1, $2, $3)',
-      [user_id, recipe_id, 'like']
-    );
-
-    await pool.query(
-      'UPDATE recipes SET likes = likes + 1 WHERE recipe_id = $1',
-      [recipe_id]
-    );
+    await supabase.from('recipe_likes').insert([{ user_id, recipe_id, interaction_type: 'like' }]);
+    await supabase.from('recipes').update({ likes: supabase.raw('likes + 1') }).eq('recipe_id', recipe_id);
 
     res.status(200).json({ message: 'Recipe liked successfully' });
   } catch (error) {
-    console.error('Error liking recipe:', error);
+    console.error('Error liking recipe:', error.message);
     res.status(500).json({ error: 'Error liking recipe' });
   }
 };
@@ -301,28 +422,28 @@ const dislikeRecipe = async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
   try {
-    const existingDislike = await pool.query(
-      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
-      [user_id, recipe_id, 'dislike']
-    );
+    const { data: existingDislike, error: fetchError } = await supabase
+      .from('recipe_likes')
+      .select()
+      .eq('user_id', user_id)
+      .eq('recipe_id', recipe_id)
+      .eq('interaction_type', 'dislike');
 
-    if (existingDislike.rows.length > 0) {
+    if (fetchError) {
+      console.error('Error disliking recipe:', fetchError.message);
+      return res.status(500).json({ error: 'Error disliking recipe' });
+    }
+
+    if (existingDislike.length > 0) {
       return res.status(400).json({ error: 'User has already disliked this recipe' });
     }
 
-    await pool.query(
-      'INSERT INTO recipe_likes (user_id, recipe_id, interaction_type) VALUES ($1, $2, $3)',
-      [user_id, recipe_id, 'dislike']
-    );
-
-    await pool.query(
-      'UPDATE recipes SET dislikes = dislikes + 1 WHERE recipe_id = $1',
-      [recipe_id]
-    );
+    await supabase.from('recipe_likes').insert([{ user_id, recipe_id, interaction_type: 'dislike' }]);
+    await supabase.from('recipes').update({ dislikes: supabase.raw('dislikes + 1') }).eq('recipe_id', recipe_id);
 
     res.status(200).json({ message: 'Recipe disliked successfully' });
   } catch (error) {
-    console.error('Error disliking recipe:', error);
+    console.error('Error disliking recipe:', error.message);
     res.status(500).json({ error: 'Error disliking recipe' });
   }
 };
@@ -331,19 +452,18 @@ const deleteLike = async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
   try {
-    await pool.query(
-      'DELETE FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
-      [user_id, recipe_id, 'like']
-    );
+    await supabase
+      .from('recipe_likes')
+      .delete()
+      .eq('user_id', user_id)
+      .eq('recipe_id', recipe_id)
+      .eq('interaction_type', 'like');
 
-    await pool.query(
-      'UPDATE recipes SET likes = CASE WHEN likes > 0 THEN likes - 1 ELSE 0 END WHERE recipe_id = $1',
-      [recipe_id]
-    );
+    await supabase.from('recipes').update({ likes: supabase.raw('CASE WHEN likes > 0 THEN likes - 1 ELSE 0 END') }).eq('recipe_id', recipe_id);
 
     res.status(200).json({ message: 'Like deleted successfully' });
   } catch (error) {
-    console.error('Error deleting like:', error);
+    console.error('Error deleting like:', error.message);
     res.status(500).json({ error: 'Error deleting like' });
   }
 };
@@ -352,20 +472,18 @@ const deleteDislike = async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
   try {
-    await pool.query(
-      'DELETE FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
-      [user_id, recipe_id, 'dislike']
-    );
+    await supabase
+      .from('recipe_likes')
+      .delete()
+      .eq('user_id', user_id)
+      .eq('recipe_id', recipe_id)
+      .eq('interaction_type', 'dislike');
 
-    await pool.query(
-      // 'UPDATE recipes SET dislikes = CASE WHEN dislikes > 0 THEN dislikes - 1 ELSE 0 END WHERE recipe_id = $1',
-      'UPDATE recipes SET dislikes = dislikes - 1 WHERE recipe_id = $1',
-      [recipe_id]
-    );
+    await supabase.from('recipes').update({ dislikes: supabase.raw('dislikes - 1') }).eq('recipe_id', recipe_id);
 
     res.status(200).json({ message: 'Dislike deleted successfully' });
   } catch (error) {
-    console.error('Error deleting dislike:', error);
+    console.error('Error deleting dislike:', error.message);
     res.status(500).json({ error: 'Error deleting dislike' });
   }
 };
@@ -374,12 +492,19 @@ const checkLikedRecipe = async (req, res) => {
   const { user_id, recipe_id } = req.query;
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
-      [user_id, recipe_id, 'like']
-    );
+    const { data: likedRecipe, error } = await supabase
+      .from('recipe_likes')
+      .select('*')
+      .eq('user_id', user_id)
+      .eq('recipe_id', recipe_id)
+      .eq('interaction_type', 'like')
+      .single();
 
-    res.status(200).json({ liked: result.rows.length > 0 });
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    res.status(200).json({ liked: !!likedRecipe });
   } catch (error) {
     console.error('Error checking liked recipe:', error);
     res.status(500).json({ error: 'Error checking liked recipe' });
@@ -390,12 +515,19 @@ const checkDislikedRecipe = async (req, res) => {
   const { user_id, recipe_id } = req.query;
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM recipe_likes WHERE user_id = $1 AND recipe_id = $2 AND interaction_type = $3',
-      [user_id, recipe_id, 'dislike']
-    );
+    const { data: dislikedRecipe, error } = await supabase
+      .from('recipe_likes')
+      .select('*')
+      .eq('user_id', user_id)
+      .eq('recipe_id', recipe_id)
+      .eq('interaction_type', 'dislike')
+      .single();
 
-    res.status(200).json({ disliked: result.rows.length > 0 });
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    res.status(200).json({ disliked: !!dislikedRecipe });
   } catch (error) {
     console.error('Error checking disliked recipe:', error);
     res.status(500).json({ error: 'Error checking disliked recipe' });

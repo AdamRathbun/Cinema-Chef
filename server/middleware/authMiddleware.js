@@ -1,34 +1,28 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config');
-const userModel = require('../auth/userModel');
 
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.header('Authorization');
 
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Unauthorized: Missing token.' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided.' });
   }
 
   const token = authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized: Missing token.' });
-  }
-
   try {
-    const decoded = jwt.verify(token, config.jwtSecret, { expiresIn: '2h' });
+    const decoded = jwt.decode(token);
+    if (!decoded) throw new Error('Invalid token');
 
-    const user = await userModel.findUserByUsername(decoded.username);
-    if (!user) {
+    if (decoded.aud !== "authenticated") {
       return res.status(401).json({ message: 'Unauthorized: Invalid token.' });
     }
 
-    req.user = user;
+    req.user = { id: decoded.sub };
 
     next();
   } catch (error) {
     console.error('Error verifying token:', error);
-    return res.status(401).json({ message: 'Unauthorized: Invalid token.' });
+    return res.status(401).json({ message: 'Unauthorized: Token verification failed.' });
   }
 };
 

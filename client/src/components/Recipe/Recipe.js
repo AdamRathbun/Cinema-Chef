@@ -62,7 +62,7 @@ function Recipe() {
     if (storedToken) {
       try {
         const decodedToken = jwtDecode(storedToken);
-        setUser(decodedToken.userId);
+        setUser(decodedToken.sub);
       } catch (error) {
         console.error('Error decoding token:', error);
       }
@@ -71,12 +71,11 @@ function Recipe() {
 
   useEffect(() => {
     const checkSavedRecipe = async () => {
+      if (!user || !id) return;
       try {
-        // *need to update later with hosting
-        const response = await axios.get(`http://localhost:5000/check-saved-recipe?user_id=${user}&recipe_id=${id}`, {
-          user_id: user,
-          recipe_id: id,
-        }, {
+        // need to update
+        const response = await axios.get(`http://localhost:5000/check-saved-recipe`, {
+          params: { user_id: user, recipe_id: id },
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -88,10 +87,9 @@ function Recipe() {
       }
     };
 
-    if (user) {
-      checkSavedRecipe();
-    }
+    checkSavedRecipe();
   }, [user, id, authToken]);
+
 
   const handleDelete = async () => {
     try {
@@ -108,7 +106,6 @@ function Recipe() {
       });
 
       if (response.data.deletedRecipe) {
-        console.log('Deleted Recipe:', response.data.deletedRecipe);
         navigate('/');
       } else {
         console.error('Failed to delete recipe:', response.data);

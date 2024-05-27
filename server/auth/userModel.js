@@ -1,42 +1,45 @@
-const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 const config = require('../config');
 
-const pool = new Pool({
-  user: config.postgresUser,
-  host: config.postgresHost,
-  database: config.postgresDatabase,
-  password: config.postgresPassword,
-  port: config.postgresPort,
-});
+const supabase = createClient(config.supabaseURL, config.supabaseKey);
 
 const createUser = async (userData) => {
   const { username, password } = userData;
 
   try {
-    const query = 'INSERT INTO users(username, password) VALUES($1, $2) RETURNING *';
-    const values = [username, password];
+    const { data: newUser, error } = await supabase
+      .from('users')
+      .insert([{ username, password }])
+      .single();
 
-    const result = await pool.query(query, values);
-    const newUser = result.rows[0];
+    if (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
 
     return newUser;
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error('Error creating user:', error.message);
     throw error;
   }
 };
 
 const findUserByUsername = async (username) => {
   try {
-    const query = 'SELECT * FROM users WHERE username = $1';
-    const values = [username];
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
 
-    const result = await pool.query(query, values);
-    const user = result.rows[0];
+    if (error) {
+      console.error('Error finding user by username:', error);
+      throw error;
+    }
 
-    return user;
+    return users[0];
   } catch (error) {
-    console.error('Error finding user by username:', error);
+    console.error('Error finding user by username:', error.message);
     throw error;
   }
 };

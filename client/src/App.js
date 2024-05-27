@@ -8,6 +8,7 @@ import YourRecipes from './components/YourRecipes/YourRecipes';
 import SavedRecipes from './components/SavedRecipes/SavedRecipes';
 import SearchResults from './components/SearchResults/SearchResults';
 import SearchBarResults from './components/SearchBarResults/SearchBarResults';
+import SupabaseAuth from './components/Auth2/Auth';
 import Footer from './components/Footer/Footer';
 import { jwtDecode } from 'jwt-decode';
 
@@ -38,6 +39,7 @@ function App() {
         <Route path='/recipes/:id' element={<Recipe />} />
         <Route path="/search/:searchType/:searchTerm" element={<SearchResults />} />
         <Route path='/search/recipe-name/:searchTerm' element={<SearchBarResults />} />
+        <Route path='/login' element={<SupabaseAuth />} />
       </Routes>
       <Footer />
     </Router>

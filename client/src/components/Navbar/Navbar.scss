@@ -109,6 +109,9 @@
     padding-left: 10px;
     padding-right: 10px;
 
+    display: flex;
+    flex-direction: column;
+
     @include phone {
       margin-bottom: 10px;
     }
@@ -119,6 +122,19 @@
       @include tablet {
         border-bottom: 0;
       }
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 4px 8px;
+      background-color: #FFA500;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color .1s ease;
+      height: 24px;
+      width: 100px;
     }
   }
 
@@ -163,5 +179,15 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
+  }
+
+  .top-spacing {
+    @include tablet {
+      margin-top: 15px;
+    }
+
+    @include phone {
+      margin-top: 30px;
+    }
   }
 }

@@ -37,36 +37,38 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
     }
 
     setIsUpdating(true);
-
     setIsEditing(false);
 
+    let formData = new FormData();
+    if (field === 'image' && value instanceof File) {
+      formData.append('image', value, value.name);
+    } else {
+      formData.append(field, value);
+    }
+    formData.append('field', field);
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${authToken}`,
+      },
+    };
+
     try {
-      const formData = new FormData();
+      const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData, config);
 
-      formData.append('field', field);
-      if (field === 'image') {
-        formData.append('image', value);
-      } else {
-        formData.append('value', value);
-      }
-
-      // *need to update later with hosting
-      const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (onUpdate) {
+      if (response.data && onUpdate) {
         onUpdate(field, response.data[field]);
+      } else {
+        console.error(`No data returned from server when updating ${field}`);
       }
     } catch (error) {
-      console.error(`Error updating ${field}:`, error);
+      console.error(`Error updating ${field}:`, error.response ? error.response.data : error);
     } finally {
       setIsUpdating(false);
     }
   };
+
 
   return (
     <div>
