@@ -1,7 +1,8 @@
 const axios = require('axios');
-const config = require('../config');
+// const config = require('../config');
 
-const apiKey = config.tmdbApiKey;
+// const apiKey = config.tmdbApiKey;
+const apiKey = process.env.tmdbApiKey;
 const apiUrl = 'https://api.themoviedb.org/3/search/movie';
 
 const searchMoviesByName = async (req, res) => {

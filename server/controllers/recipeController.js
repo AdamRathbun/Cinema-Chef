@@ -1,7 +1,8 @@
 const { createClient } = require('@supabase/supabase-js');
-const config = require('../config');
+// const config = require('../config');
 
-const supabase = createClient(config.supabaseURL, config.supabaseKey);
+// const supabase = createClient(config.supabaseURL, config.supabaseKey);
+const supabase = createClient(process.env.supabaseURL, process.env.supabaseKey);
 
 const getAllRecipes = async (req, res) => {
   try {

@@ -1,5 +1,4 @@
 const express = require('express');
-const config = require('./config');
 const cors = require('cors')
 const path = require('path');
 const fs = require('fs').promises;
@@ -8,6 +7,7 @@ const { authenticateToken } = require('./middleware/authMiddleware');
 const movieController = require('./controllers/movieController');
 const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
+// const config = require('./config');
 
 const cloudinary = require('cloudinary').v2;
 const { cloudinaryConfig } = require('./config');
@@ -19,12 +19,21 @@ const port = 5000;
 app.use(express.json());
 app.use(cors())
 
-const supabase = createClient(config.supabaseURL, config.supabaseKey);
+// const supabase = createClient(config.supabaseURL, config.supabaseKey);
+
+// cloudinary.config({
+//   cloud_name: cloudinaryConfig.cloud_name,
+//   api_key: cloudinaryConfig.api_key,
+//   api_secret: cloudinaryConfig.api_secret,
+//   secure: true,
+// });
+
+const supabase = createClient(process.env.supabaseURL, process.env.supabaseKey);
 
 cloudinary.config({
-  cloud_name: cloudinaryConfig.cloud_name,
-  api_key: cloudinaryConfig.api_key,
-  api_secret: cloudinaryConfig.api_secret,
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
   secure: true,
 });
 
@@ -39,7 +48,6 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-// good
 app.get('/recipes', async (req, res) => {
   try {
     const { data: recipes, error } = await supabase.from('recipes').select('*');
@@ -56,7 +64,6 @@ app.get('/recipes', async (req, res) => {
   }
 });
 
-// good
 app.get('/top-liked-recipes', async (req, res) => {
   try {
     const { data: topLikedRecipes, error } = await supabase
@@ -77,7 +84,6 @@ app.get('/top-liked-recipes', async (req, res) => {
   }
 });
 
-// good
 app.get('/recipes/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -103,7 +109,6 @@ app.get('/recipes/:id', async (req, res) => {
   }
 });
 
-// good
 app.get('/user-recipes', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
@@ -147,7 +152,6 @@ app.get('/recipes/meal-type/:mealType', async (req, res) => {
   }
 });
 
-// good
 app.get('/recipes/dietary-restriction/:dietaryRestriction', async (req, res) => {
   const { dietaryRestriction } = req.params;
 
@@ -169,7 +173,6 @@ app.get('/recipes/dietary-restriction/:dietaryRestriction', async (req, res) => 
   }
 });
 
-// good
 app.get('/recipes/movie-genre/:movieGenre', async (req, res) => {
   const { movieGenre } = req.params;
 
@@ -191,7 +194,6 @@ app.get('/recipes/movie-genre/:movieGenre', async (req, res) => {
   }
 });
 
-// good
 app.get('/recipes/search/recipe-name/:searchTerm', async (req, res) => {
   const { searchTerm } = req.params;
 
@@ -213,7 +215,6 @@ app.get('/recipes/search/recipe-name/:searchTerm', async (req, res) => {
   }
 });
 
-// good
 app.post('/upload-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
@@ -231,7 +232,6 @@ app.post('/upload-image', authenticateToken, upload.single('image'), async (req,
   }
 });
 
-// good
 app.post('/recipes-with-image', authenticateToken, upload.single('image'), async (req, res) => {
   const { title, ingredients, instructions, movie_title, imageUrl, meal_type, dietary_restriction, movie_genre, description, prep_time } = req.body;
 
@@ -266,7 +266,6 @@ app.post('/recipes-with-image', authenticateToken, upload.single('image'), async
   }
 });
 
-// good
 app.post('/recipes-without-image', authenticateToken, upload.none(), async (req, res) => {
   const { title, ingredients, instructions, movie_title, meal_type, dietary_restriction, movie_genre, description, prep_time } = req.body;
 
@@ -300,7 +299,6 @@ app.post('/recipes-without-image', authenticateToken, upload.none(), async (req,
   }
 });
 
-// good
 app.post('/save-recipe', async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
@@ -336,7 +334,6 @@ app.post('/save-recipe', async (req, res) => {
   }
 });
 
-// good
 app.delete('/unsave-recipe', async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
@@ -363,7 +360,6 @@ app.delete('/unsave-recipe', async (req, res) => {
   }
 });
 
-// good
 app.get('/saved-recipes', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
@@ -385,7 +381,6 @@ app.get('/saved-recipes', authenticateToken, async (req, res) => {
   }
 });
 
-// good
 app.get('/check-saved-recipe', async (req, res) => {
   const { user_id, recipe_id } = req.query;
 
@@ -409,7 +404,6 @@ app.get('/check-saved-recipe', async (req, res) => {
   }
 });
 
-// good
 app.post('/like-recipe', async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
@@ -468,7 +462,6 @@ app.post('/like-recipe', async (req, res) => {
   }
 });
 
-// good
 app.post('/dislike-recipe', async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
@@ -525,7 +518,6 @@ app.post('/dislike-recipe', async (req, res) => {
   }
 });
 
-// good
 app.post('/delete-like', async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
@@ -570,7 +562,6 @@ app.post('/delete-like', async (req, res) => {
   }
 });
 
-// good
 app.post('/delete-dislike', async (req, res) => {
   const { user_id, recipe_id } = req.body;
 
@@ -615,7 +606,6 @@ app.post('/delete-dislike', async (req, res) => {
   }
 });
 
-// good
 app.get('/check-liked-recipe', authenticateToken, async (req, res) => {
   const { recipe_id } = req.query;
   const user_id = req.user.id;
@@ -641,7 +631,6 @@ app.get('/check-liked-recipe', authenticateToken, async (req, res) => {
   }
 });
 
-// good
 app.get('/check-disliked-recipe', authenticateToken, async (req, res) => {
   const { recipe_id } = req.query;
   const user_id = req.user.id;
@@ -667,7 +656,6 @@ app.get('/check-disliked-recipe', authenticateToken, async (req, res) => {
   }
 });
 
-// good
 app.put('/recipes/:id', authenticateToken, upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;
@@ -741,7 +729,6 @@ function buildUpdates(req) {
   return updates;
 }
 
-// ok
 app.delete('/recipes/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;
@@ -755,7 +742,6 @@ app.delete('/recipes/:id', authenticateToken, async (req, res) => {
       .single();
 
     if (fetchError || !existingRecipe) {
-      // console.error('Error fetching recipe or recipe does not exist:', fetchError?.message);
       return res.status(404).json({ message: 'No recipe found or access denied for this user.', details: fetchError?.message });
     }
 
@@ -798,4 +784,3 @@ app.listen(port, () => {
   // need to update later
   console.log(`Server is running on http://localhost:${port}`);
 });
-
