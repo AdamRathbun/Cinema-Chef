@@ -10,7 +10,7 @@ const { createClient } = require('@supabase/supabase-js');
 // const config = require('./config');
 
 const cloudinary = require('cloudinary').v2;
-const { cloudinaryConfig } = require('./config');
+// const { cloudinaryConfig } = require('./config');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
