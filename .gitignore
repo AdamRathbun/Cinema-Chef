@@ -29,3 +29,5 @@ config.js
 # temp data
 uploads/
 upload-image/
+
+node_modules
