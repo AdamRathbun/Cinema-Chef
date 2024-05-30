@@ -782,5 +782,5 @@ app.get('/api/movies/search', movieController.searchMoviesByName);
 
 app.listen(port, () => {
   // need to update later
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on https://cinema-chef.onrender.com:${port}`);
 });

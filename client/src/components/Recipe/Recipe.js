@@ -26,20 +26,20 @@ function Recipe() {
   const navigate = useNavigate();
   const { id } = useParams();
   const authToken = localStorage.getItem('authToken');
-  const recipeUrl = `http://localhost:5000/recipes/${id}`;
+  const recipeUrl = `https://cinema-chef.onrender.com/recipes/${id}`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // *need to update later with hosting
-        const response = await axios.get(`http://localhost:5000/recipes/${id}`);
+        const response = await axios.get(`https://cinema-chef.onrender.com/recipes/${id}`);
 
         setRecipe(response.data);
 
         const movieTitle = response.data.movie_title;
         if (movieTitle) {
           // *need to update later with hosting
-          const movieResponse = await axios.get(`http://localhost:5000/api/movies/search?name=${movieTitle}`);
+          const movieResponse = await axios.get(`https://cinema-chef.onrender.com/api/movies/search?name=${movieTitle}`);
           const movieData = movieResponse.data[0];
 
           if (movieData && movieData.title.toLowerCase() === movieTitle.toLowerCase()) {
@@ -74,7 +74,7 @@ function Recipe() {
       if (!user || !id) return;
       try {
         // need to update
-        const response = await axios.get(`http://localhost:5000/check-saved-recipe`, {
+        const response = await axios.get(`https://cinema-chef.onrender.com/check-saved-recipe`, {
           params: { user_id: user, recipe_id: id },
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -99,7 +99,7 @@ function Recipe() {
       }
 
       // *need to update later with hosting
-      const response = await axios.delete(`http://localhost:5000/recipes/${id}`, {
+      const response = await axios.delete(`https://cinema-chef.onrender.com/recipes/${id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -145,7 +145,7 @@ function Recipe() {
       };
 
       // *need to update later with hosting
-      const response = await axios.put(`http://localhost:5000/recipes/${id}`, updateData, {
+      const response = await axios.put(`https://cinema-chef.onrender.com/recipes/${id}`, updateData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -161,7 +161,7 @@ function Recipe() {
 
   const handleRecipeUpdate = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/recipes/${id}`);
+      const response = await axios.get(`https://cinema-chef.onrender.com/recipes/${id}`);
       setRecipe(response.data);
     } catch (error) {
       console.error('Error fetching updated recipe data:', error);

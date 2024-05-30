@@ -58,7 +58,7 @@ function AddRecipe() {
         form.append('image', formData.image);
 
         // *need to update later with hosting
-        const uploadResponse = await axios.post('http://localhost:5000/upload-image', form, {
+        const uploadResponse = await axios.post('https://cinema-chef.onrender.com/upload-image', form, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${authToken}`,
@@ -68,7 +68,7 @@ function AddRecipe() {
         const imageUrl = uploadResponse.data.imageUrl;
 
         // *need to update later with hosting
-        await axios.post('http://localhost:5000/recipes-with-image', { ...formData, imageUrl }, {
+        await axios.post('https://cinema-chef.onrender.com/recipes-with-image', { ...formData, imageUrl }, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${authToken}`,
@@ -76,7 +76,7 @@ function AddRecipe() {
         });
       } else {
         // *need to update later with hosting
-        await axios.post('http://localhost:5000/recipes-without-image', form, {
+        await axios.post('https://cinema-chef.onrender.com/recipes-without-image', form, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${authToken}`,

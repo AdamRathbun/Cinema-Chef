@@ -20,7 +20,7 @@ const SearchBar = () => {
       }
 
       // *need to update later with hosting
-      await axios.get(`http://localhost:5000/recipes/search/recipe-name/${query}`);
+      await axios.get(`https://cinema-chef.onrender.com/recipes/search/recipe-name/${query}`);
 
       navigate(`/search/recipe-name/${query}`);
       setQuery('');

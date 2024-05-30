@@ -14,7 +14,7 @@ function SavedRecipes() {
     const fetchSavedRecipes = async () => {
       try {
         // *need to update later with hosting
-        const response = await axios.get('http://localhost:5000/saved-recipes', {
+        const response = await axios.get('https://cinema-chef.onrender.com/saved-recipes', {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },

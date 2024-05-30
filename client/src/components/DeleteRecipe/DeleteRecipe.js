@@ -9,7 +9,7 @@ const DeleteRecipe = ({ recipeId, onDelete, authToken }) => {
         return;
       }
 
-      const response = await axios.delete(`http://localhost:5000/recipes/${recipeId}`, {
+      const response = await axios.delete(`https://cinema-chef.onrender.com/recipes/${recipeId}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },

@@ -14,7 +14,7 @@ const SearchBarResults = () => {
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/recipes/search/recipe-name/${searchTerm}`, {
+        const response = await axios.get(`https://cinema-chef.onrender.com/recipes/search/recipe-name/${searchTerm}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },

@@ -8,7 +8,7 @@ function DislikeRecipe({ userId, recipeId, authToken, onLike }) {
   useEffect(() => {
     const checkDislikedRecipe = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/check-disliked-recipe?user_id=${userId}&recipe_id=${recipeId}`, {
+        const response = await axios.get(`https://cinema-chef.onrender.com/check-disliked-recipe?user_id=${userId}&recipe_id=${recipeId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -26,7 +26,7 @@ function DislikeRecipe({ userId, recipeId, authToken, onLike }) {
     try {
       if (disliked) {
         await axios.post(
-          'http://localhost:5000/delete-dislike',
+          'https://cinema-chef.onrender.com/delete-dislike',
           { user_id: userId, recipe_id: recipeId },
           {
             headers: {
@@ -38,7 +38,7 @@ function DislikeRecipe({ userId, recipeId, authToken, onLike }) {
         setDisliked(false);
       } else {
         await axios.post(
-          'http://localhost:5000/dislike-recipe',
+          'https://cinema-chef.onrender.com/dislike-recipe',
           { user_id: userId, recipe_id: recipeId },
           {
             headers: {

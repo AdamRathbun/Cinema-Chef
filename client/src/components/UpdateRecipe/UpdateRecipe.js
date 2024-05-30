@@ -55,7 +55,7 @@ function UpdateRecipe({ field, initialValue, onUpdate, id, authToken }) {
     };
 
     try {
-      const response = await axios.put(`http://localhost:5000/recipes/${id}`, formData, config);
+      const response = await axios.put(`https://cinema-chef.onrender.com/recipes/${id}`, formData, config);
 
       if (response.data && onUpdate) {
         onUpdate(field, response.data[field]);

@@ -32,7 +32,7 @@ const SearchResults = () => {
             console.error('Invalid search type:', searchType);
             return;
         }
-        const response = await axios.get(`http://localhost:5000${endpoint}`, {
+        const response = await axios.get(`https://cinema-chef.onrender.com${endpoint}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },

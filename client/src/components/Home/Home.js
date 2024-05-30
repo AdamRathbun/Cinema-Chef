@@ -14,7 +14,7 @@ function Home() {
 
   useEffect(() => {
     // *need to update later with hosting
-    axios.get('http://localhost:5000/top-liked-recipes')
+    axios.get('https://cinema-chef.onrender.com/top-liked-recipes')
       .then((response) => {
         setLikedRecipes(response.data);
       })

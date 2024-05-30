@@ -8,7 +8,7 @@ function LikeRecipe({ userId, recipeId, authToken, onLike }) {
   useEffect(() => {
     const checkLikedRecipe = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/check-liked-recipe?user_id=${userId}&recipe_id=${recipeId}`, {
+        const response = await axios.get(`https://cinema-chef.onrender.com/check-liked-recipe?user_id=${userId}&recipe_id=${recipeId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -26,7 +26,7 @@ function LikeRecipe({ userId, recipeId, authToken, onLike }) {
     try {
       if (liked) {
         await axios.post(
-          'http://localhost:5000/delete-like',
+          'https://cinema-chef.onrender.com/delete-like',
           { user_id: userId, recipe_id: recipeId },
           {
             headers: {
@@ -38,7 +38,7 @@ function LikeRecipe({ userId, recipeId, authToken, onLike }) {
         setLiked(liked => !liked);
       } else {
         await axios.post(
-          'http://localhost:5000/like-recipe',
+          'https://cinema-chef.onrender.com/like-recipe',
           { user_id: userId, recipe_id: recipeId },
           {
             headers: {
