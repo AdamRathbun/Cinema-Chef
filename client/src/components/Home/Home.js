@@ -142,13 +142,13 @@ function Home() {
           ))}
       </div>
 
-      <div className='band drink'>
-        <h5>Sensational Sippers for Every Occassion</h5>
+      <div className='band dinner'>
+        <h5>Winner Winner Simple Dinner</h5>
       </div>
 
       <div className='grid'>
         {likedRecipesWithImages
-          .filter(recipe => recipe.meal_type === 'drink')
+          .filter(recipe => recipe.meal_type === 'dinner')
           .slice(0, 6)
           .map((recipe) => (
             <div className='grid-unit' key={recipe.recipe_id}>
@@ -161,13 +161,13 @@ function Home() {
           ))}
       </div>
 
-      <div className='band dinner'>
-        <h5>Winner Winner Simple Dinner</h5>
+      <div className='band drink'>
+        <h5>Sensational Sippers for Every Occassion</h5>
       </div>
 
       <div className='grid'>
         {likedRecipesWithImages
-          .filter(recipe => recipe.meal_type === 'dinner')
+          .filter(recipe => recipe.meal_type === 'drink')
           .slice(0, 6)
           .map((recipe) => (
             <div className='grid-unit' key={recipe.recipe_id}>
