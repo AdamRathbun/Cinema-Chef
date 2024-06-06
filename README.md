@@ -1,4 +1,6 @@
-Cinema Chef
+**Cinema Chef**
+
+
 A movie recipe app for culinary creations inspired by my favorite cinematic experiences. Users can create and share recipes with not just info like ingredients and instructions, but also fun tags like movie inspiration and genre. They can then search the app for dishes and drinks based on diet or movie and meal category.
 
 Link to project (Needs a moment to boot up because it's on conservation mode): https://cinemachef.netlify.app/
